@@ -1,0 +1,190 @@
+/*!* Style pastel et minimaliste pour l'application *!*/
+
+/*!* Global settings *!*/
+/*body {*/
+/*    font-family: 'Arial', sans-serif;*/
+/*    background-color: #f5f5f5;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    color: #333;*/
+/*}*/
+
+/*.container {*/
+/*    width: 90%;*/
+/*    max-width: 1200px;*/
+/*    margin: 50px auto;*/
+/*    background-color: #ffffff;*/
+/*    padding: 20px;*/
+/*    border-radius: 8px;*/
+/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+/*h1 {*/
+/*    color: #6a5acd;*/
+/*    text-align: center;*/
+/*    font-size: 28px;*/
+/*    margin-bottom: 20px;*/
+/*}*/
+
+/*!* Navigation *!*/
+/*.nav-container {*/
+/*    background-color: #ffffff;*/
+/*    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
+/*    padding: 10px 0;*/
+/*    margin-bottom: 40px;*/
+/*}*/
+
+/*.nav-container ul {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    padding: 0;*/
+/*    list-style: none;*/
+/*}*/
+
+/*.nav-container ul li {*/
+/*    margin: 0 20px;*/
+/*}*/
+
+/*.nav-container ul li a {*/
+/*    text-decoration: none;*/
+/*    color: #6a5acd;*/
+/*    font-size: 18px;*/
+/*    font-weight: bold;*/
+/*    padding: 10px;*/
+/*}*/
+
+/*.nav-container ul li a:hover {*/
+/*    color: #4b3d99;*/
+/*    border-bottom: 2px solid #6a5acd;*/
+/*}*/
+
+/*!* Form *!*/
+/*.search-form {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    gap: 20px;*/
+/*}*/
+
+/*.search-form .filter-group {*/
+/*    background-color: #f9f9f9;*/
+/*    padding: 10px;*/
+/*    border-radius: 6px;*/
+/*    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+/*.search-form .filter-group label {*/
+/*    font-size: 16px;*/
+/*    color: #6a5acd;*/
+/*    margin-bottom: 5px;*/
+/*}*/
+
+/*.search-form .filter-options {*/
+/*    display: flex;*/
+/*    gap: 10px;*/
+/*    flex-wrap: wrap;*/
+/*}*/
+
+/*.search-form .filter-option {*/
+/*    display: flex;*/
+/*    gap: 5px;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.search-form input[type='text'] {*/
+/*    padding: 8px;*/
+/*    font-size: 14px;*/
+/*    border: 1px solid #ddd;*/
+/*    border-radius: 4px;*/
+/*    width: 200px;*/
+/*    margin-right: 10px;*/
+/*}*/
+
+/*.search-form select {*/
+/*    padding: 8px;*/
+/*    font-size: 14px;*/
+/*    border: 1px solid #ddd;*/
+/*    border-radius: 4px;*/
+/*}*/
+
+/*.search-form button {*/
+/*    background-color: #6a5acd;*/
+/*    color: white;*/
+/*    border: none;*/
+/*    padding: 12px 20px;*/
+/*    border-radius: 5px;*/
+/*    cursor: pointer;*/
+/*    font-size: 16px;*/
+/*    margin-top: 20px;*/
+/*}*/
+
+/*.search-form button:hover {*/
+/*    background-color: #5a4eb8;*/
+/*}*/
+
+/*!* DataTable *!*/
+/*table {*/
+/*    width: 100%;*/
+/*    border-collapse: collapse;*/
+/*    margin-top: 20px;*/
+/*}*/
+
+/*thead {*/
+/*    background-color: #dcd6f7;*/
+/*}*/
+
+/*thead th {*/
+/*    padding: 12px;*/
+/*    text-align: left;*/
+/*    color: #4a3f9b;*/
+/*}*/
+
+/*tbody tr:nth-child(even) {*/
+/*    background-color: #f2f0fc;*/
+/*}*/
+
+/*tbody tr:hover {*/
+/*    background-color: #e0daf7;*/
+/*    cursor: pointer;*/
+/*}*/
+
+/*td {*/
+/*    padding: 10px;*/
+/*    border-bottom: 1px solid #ddd;*/
+/*}*/
+
+/*!* Button remove filter *!*/
+/*button.remove-filter {*/
+/*    background: none;*/
+/*    color: #e74c3c;*/
+/*    border: none;*/
+/*    cursor: pointer;*/
+/*    font-size: 18px;*/
+/*}*/
+
+/*!* Hover effect for remove button *!*/
+/*button.remove-filter:hover {*/
+/*    color: #c0392b;*/
+/*}*/
+
+/*!* Responsive *!*/
+/*@media (max-width: 768px) {*/
+/*    .container {*/
+/*        width: 100%;*/
+/*        margin: 20px;*/
+/*    }*/
+
+/*    .search-form input[type='text'],*/
+/*    .search-form select {*/
+/*        width: 100%;*/
+/*    }*/
+/*}*/
+
+/*!* Table responsive *!*/
+/*@media (max-width: 768px) {*/
+/*    table {*/
+/*        font-size: 12px;*/
+/*    }*/
+/*    thead th {*/
+/*        font-size: 14px;*/
+/*    }*/
+/*}*/
