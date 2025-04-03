@@ -3,13 +3,15 @@
 include 'db_connect.php';
 
 global $pdo;
+
 global $formes;
 global $voies;
 global $statuts;
 global $substances;
 
 // Récupérer les données pour chaque champ
-function getDistinctValues($column, $table) {
+function getDistinctValues($column, $table)
+{
     global $pdo;
     $query = $pdo->prepare("SELECT DISTINCT $column FROM $table");
     $query->execute();
