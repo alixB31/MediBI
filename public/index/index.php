@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
 <?php include '../includes/navigation.php'; ?>
@@ -14,6 +14,6 @@
     <p>Utilisez cette application pour rechercher des médicaments et aider à la prise de décision.</p>
 </div>
 
-<script src="../assets/js/script.js"></script>
+<script src="../../assets/js/script.js"></script>
 </body>
 </html>
