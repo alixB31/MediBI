@@ -1,6 +1,6 @@
 <nav class="nav-container">
     <ul>
-        <li><a href="../public/index/index.php">Accueil</a></li>
-        <li><a href="../public/search/search.php">Rechercher un médicament</a></li>
+        <li><a href="../index/index.php">Accueil</a></li>
+        <li><a href="../search/search.php">Rechercher un médicament</a></li>
     </ul>
 </nav>

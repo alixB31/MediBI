@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 </head>
 <body>
-<?php include '../includes/navigation.php'; ?>
+<?php include '../../includes/navigation.php'; ?>
 
 <div class="container">
     <h1>Résultats de la Recherche</h1>
