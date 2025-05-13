@@ -1,4 +1,3 @@
-/***
 .container {
     display: grid;
     grid-template-columns: 1fr 0fr;
@@ -15,6 +14,7 @@
 }
 
 #detailsPanel {
+    margin-top: 60px;
     overflow: hidden;
     padding: 20px;
     border-left: 1px solid #ccc;
@@ -45,4 +45,75 @@
     }
 }
 
-***/
+/* Largeurs fixes pour les colonnes sélectionnées */
+#resultsTable th:nth-child(1),
+#resultsTable td:nth-child(1) {
+    width: 60px !important;
+    /* Code CIS */
+}
+
+#resultsTable th:nth-child(2),
+#resultsTable td:nth-child(2) {
+    width: 290px !important;
+    /* Dénomination */
+}
+
+#resultsTable th:nth-child(3),
+#resultsTable td:nth-child(3) {
+    width: 180px !important;
+    /* Titulaire */
+}
+
+#resultsTable th:nth-child(4),
+#resultsTable td:nth-child(4) {
+    width: 100px !important;
+    /* Voie d'administration */
+}
+
+#resultsTable th:nth-child(5),
+#resultsTable td:nth-child(5) {
+    width: 230px !important;
+    /* Substances actives */
+}
+
+#resultsTable th:nth-child(6),
+#resultsTable td:nth-child(6) {
+    width: 50px !important;
+    /* Prix */
+}
+
+/* Masquer Substance Active sous 1100px */
+@media (max-width: 1000px) {
+
+    #resultsTable th:nth-child(5),
+    #resultsTable td:nth-child(5) {
+        display: none;
+    }
+}
+
+/* Masquer Voie d'administration sous 950px */
+@media (max-width: 900px) {
+
+    #resultsTable th:nth-child(4),
+    #resultsTable td:nth-child(4) {
+        display: none;
+    }
+}
+
+/* Masquer Titulaire sous 800px */
+@media (max-width: 750px) {
+
+    #resultsTable th:nth-child(3),
+    #resultsTable td:nth-child(3) {
+        display: none;
+    }
+}
+
+/* Masquer Prix sous 700px */
+@media (max-width: 650px) {
+
+    #resultsTable th:nth-child(6),
+    #resultsTable td:nth-child(6) {
+        display: none;
+    }
+}

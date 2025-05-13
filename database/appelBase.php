@@ -3,22 +3,8 @@ include 'db_connect.php';
 
 global $pdo;
 
-function getMedicaments()
-{
-    global $pdo;
-    $query = $pdo->query("
-        SELECT * FROM 'affichage_resultat_medicament'
-    ");
-
-    $medicaments = $query->fetchAll(PDO::FETCH_ASSOC);
-
-    // foreach ($medicaments as &$medicament) {
-    //     $medicament['substance'] = implode(", ", getSubstancesByMedicament($medicament['id']));
-    // }
-
-    return $medicaments;
-}
-
+// Cache local
+$medicamentCache = null;
 
 // Récupère les valeurs distinctes pour les filtres
 function getDistinctValues($column, $table)
@@ -45,34 +31,33 @@ function getSubstances() {
     return getDistinctValues("denomination_substance", "ciscompo");
 }
 
+function getMedicaments()
+{
+    global $pdo;
+    // Sinon on récupère depuis la base de données
+    $query = $pdo->query("SELECT * FROM affichage_resultat_medicament LIMIT 100");
+    $medicamentCache = $query->fetchAll(PDO::FETCH_ASSOC);
+
+    return $medicamentCache;
+}
+
 // Récupère un médicament par son code_cis
 function getMedicamentById($id)
 {
-    global $pdo;
-    $query = $pdo->prepare("
-        SELECT 
-            cis.code_cis,
-            cis.denomination AS nom,
-            cishassmr.valeur_smr AS smr
-        FROM cis
-        LEFT JOIN cishassmr ON cis.code_cis = cishassmr.code_cis
-        WHERE cis.code_cis = :id
-        LIMIT 1
-    ");
+    global $pdo, $medicamentCache;
+
+    // Vérifie dans le cache d'abord
+    if ($medicamentCache !== null) {
+        foreach ($medicamentCache as $medicament) {
+            if ($medicament['code_cis'] == $id) {
+                return $medicament;
+            }
+        }
+    }
+
+    // Sinon, récupère depuis la base de données
+    $query = $pdo->prepare("SELECT * FROM affichage_resultat_medicament WHERE code_cis = :id LIMIT 1");
     $query->execute(['id' => $id]);
     return $query->fetch(PDO::FETCH_ASSOC);
-}
-
-// Récupère les substances d’un médicament
-function getSubstancesByMedicament($id)
-{
-    global $pdo;
-    $query = $pdo->prepare("
-        SELECT denomination_substance 
-        FROM ciscompo 
-        WHERE code_cis = :id
-    ");
-    $query->execute(['id' => $id]);
-    return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 ?>

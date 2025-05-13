@@ -1,11 +1,31 @@
 $(document).ready(function () {
     // Initialisation de DataTables sans la barre de recherche
     $('#resultsTable').DataTable({
-        searching: false  // Désactive la barre de recherche
+        searching: false,
+        autoWidth: false,
+        pageLength: 10,
+        lengthMenu: [[5, 10, 20, 50], [5, 10, 20, 50]],
+        language: {
+            lengthMenu: "Afficher _MENU_ lignes par page",
+            info: "Page _PAGE_ sur _PAGES_",
+            infoEmpty: "Aucun résultat disponible",
+            infoFiltered: "(filtré depuis _MAX_ lignes)",
+            paginate: {
+                previous: "Précédent",
+                next: "Suivant"
+            }
+        }
     });
+
+
+    function isScreenWideEnough() {
+        return $(window).width() >= 1100;
+    }
 
     // Ouvrir la carte de détails
     $('#resultsTable tbody').on('click', 'tr', function () {
+        if (!isScreenWideEnough()) return; // Ne rien faire si trop étroit
+
         const id = $(this).data('id');
         $.ajax({
             url: '../details/details.php',
@@ -23,18 +43,23 @@ $(document).ready(function () {
 
     // Fermer la carte de détails en cliquant en dehors de la carte
     $(document).on('click', function (event) {
-        // Vérifier si le clic est en dehors du panneau de détails et des éléments cliquables
         if (!$(event.target).closest('#detailsPanel').length && !$(event.target).closest('tr').length) {
             $('#mainContainer').removeClass('details-visible');
         }
     });
 
-    // Empêcher la propagation du clic lorsque l'on clique sur le panneau de détails ou sur les éléments de la ligne
+    // Empêcher la propagation du clic
     $('#detailsPanel').on('click', function (event) {
         event.stopPropagation();
     });
-
     $('#resultsTable').on('click', 'tr', function (event) {
         event.stopPropagation();
+    });
+
+    // Fermer les détails si l'écran devient trop étroit
+    $(window).on('resize', function () {
+        if (!isScreenWideEnough()) {
+            $('#mainContainer').removeClass('details-visible');
+        }
     });
 });

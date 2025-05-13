@@ -12,7 +12,7 @@
 // $password = $_ENV['PASSWORD'];
 
 $host = 'dolibarr.iut-rodez.fr';
-$dbname = 'SAE_S6_2025';
+$dbname = 'SAE_S6_2025_E';
 $username = 'SAE_S6_2025_E';
 $password = '333ikRwV';
 
