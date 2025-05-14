@@ -11,6 +11,7 @@ error_reporting(E_ALL);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recherche Avancée de Médicaments</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="search.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
 </head>
 <body>
@@ -23,63 +24,50 @@ include '../../database/appelBase.php';
     <h1>Recherche Avancée de Médicaments</h1>
     <form method="GET" action="search.php" class="search-form">
         <?php
+        $denomination = getDistinctValues("denomination", "cis");
         $formes = getDistinctValues("forme_phamaceutique", "cis");
         $voies = getDistinctValues("voie_administration", "cis");
+        $titulaires = getDistinctValues("titulaires", "cis");
         $statuts = getDistinctValues("libelle_statut", "cisciodispo");
         $substances = getDistinctValues("denomination_substance", "ciscompo");
+        $valeurs_smr = getDistinctValues("valeur_smr", "cishassmr");
 
-        $criteria = [
-            "denomination" => "Dénomination",
-            "forme_pharmaceutique" => "Forme pharmaceutique",
-            "voie_administration" => "Voie d'administration",
-            "titulaires" => "Titulaire",
-            "libelle_statut" => "Statut",
-            "denomination_substance" => "Substance active",
-            "valeurs_smr" => "Valeur SMR"
-        ];
-
-        foreach ($criteria as $field => $label) {
-            echo "<div class='filter-group' id='{$field}_group'>
-            <label>$label :</label>
-            <div class='filter-options' id='{$field}_filters'>
-                <div class='filter-option'>
-                    <select name='{$field}_filter_type[]'>
-                        <option value='include'>Inclure</option>
-                        <option value='exclude'>Exclure</option>
-                    </select>";
-
-            // Ajouter le bon type de champ selon le critère
-            if ($field == "forme_pharmaceutique") {
-                echo "<select name='{$field}_filter_value[]' class='multi-select' multiple>";
-                foreach ($formes as $forme) {
-                    echo "<option value='{$forme}'>{$forme}</option>";
-                }
-                echo "</select>";
-            } elseif ($field == "voie_administration") {
-                echo "<select name='{$field}_filter_value[]' class='multi-select' multiple>";
-                foreach ($voies as $voie) {
-                    echo "<option value='{$voie}'>{$voie}</option>";
-                }
-                echo "</select>";
-            } elseif ($field == "libelle_statut") {
-                echo "<select name='{$field}_filter_value[]' class='multi-select' multiple>";
-                foreach ($statuts as $statut) {
-                    echo "<option value='{$statut}'>{$statut}</option>";
-                }
-                echo "</select>";
-            } else {
-                // Champ texte pour les critères qui ne sont pas des listes déroulantes
-                echo "<br><input type='text' name='{$field}_filter_value[]' placeholder='$label...'><br>";
+        function renderDualSelect($label, $name, $values) {
+            echo "<div class='filter-group'>";
+            echo "<label>{$label} :</label>";
+            echo "<div class='filter-row'>";
+            
+            // Inclure
+            echo "<div class='filter-column'>";
+            echo "<label>Inclure :</label>";
+            echo "<select name='{$name}_include[]' class='multi-select' multiple>";
+            foreach ($values as $val) {
+                echo "<option value='{$val}'>{$val}</option>";
             }
+            echo "</select>";
+            echo "</div>";
 
-            echo "<button type='button' class='remove-filter' data-field='{$field}'>×</button>
-            </div>
-            </div>
-            <button type='button' class='add-filter' data-field='{$field}'>+ Ajouter un filtre</button>
-          </div>";
+            // Exclure
+            echo "<div class='filter-column'>";
+            echo "<label>Exclure :</label>";
+            echo "<select name='{$name}_exclude[]' class='multi-select' multiple>";
+            foreach ($values as $val) {
+                echo "<option value='{$val}'>{$val}</option>";
+            }
+            echo "</select>";
+            echo "</div>";
+
+            echo "</div></div>";
         }
-        ?>
 
+        renderDualSelect("Dénomination", "denomination_filter_value", $denomination);
+        renderDualSelect("Forme pharmaceutique", "forme_pharmaceutique_filter_value", $formes);
+        renderDualSelect("Voie d'administration", "voie_administration_filter_value", $voies);
+        renderDualSelect("Titulaire", "titulaires_filter_value", $titulaires);
+        renderDualSelect("Statut", "libelle_statut_filter_value", $statuts);
+        renderDualSelect("Substance active", "denomination_substance_filter_value", $substances);
+        renderDualSelect("Valeur SMR", "valeurs_smr_filter_value", $valeurs_smr);
+        ?>
         <button type="submit">Rechercher</button>
     </form>
 </div>
