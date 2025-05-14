@@ -104,50 +104,24 @@ WHERE date_fin >= DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')     AND date
 -- Vue pour l'affichage des resultats d'un medicament
 CREATE VIEW affichage_resultat_medicament
 AS 
-SELECT 
-    cis.code_cis, 
-    denomination, 
-    titulaires, 
-    forme_phamaceutique, 
-    voie_administration, 
-    cis.statut_administratif, 
-    etat_commercialisation, 
-    taux_remboursement, 
-    smr.valeurs_smr, 
-    GROUP_CONCAT(DISTINCT compo.substances SEPARATOR '; ') AS substances, 
-    prix_medicament_b AS prix, 
-    ciscip.reference_dosage, 
-    CASE 
-        WHEN type_generique = 0 THEN 'Médicaments de marques'
-        WHEN type_generique IN (1, 2, 4) THEN 'Médicaments génériques'
-    END AS type_medicament
+SELECT cis.code_cis, denomination, libelle, voie_administration, type_generique, taux_remboursement
 FROM SAE_S6_2025.cis
-LEFT JOIN SAE_S6_2025.ciscip ON cis.code_cis = ciscip.code_cis
-LEFT JOIN SAE_S6_2025.cisgener ON cis.code_cis = cisgener.code_cis
-LEFT JOIN SAE_S6_2025_E.vue_smr AS smr ON cis.code_cis = smr.code_cis
-LEFT JOIN SAE_S6_2025_E.vue_compo AS compo ON cis.code_cis = compo.code_cis
-GROUP BY 
-    cis.code_cis, 
-    denomination, 
-    titulaires, 
-    forme_phamaceutique, 
-    voie_administration, 
-    cis.statut_administratif, 
-    etat_commercialisation, 
-    taux_remboursement, 
-    smr.valeurs_smr, 
-    compo.reference_dosage, 
-    type_generique,
-    prix;
+INNER JOIN SAE_S6_2025.ciscip ON cis.code_cis = ciscip.code_cis
+INNER JOIN SAE_S6_2025.cisgener ON cis.code_cis = cisgener.code_cis
 
 
-CREATE VIEW vue_compo AS
-SELECT code_cis, GROUP_CONCAT(DISTINCT denomination_substance SEPARATOR '; ') AS substances
-FROM SAE_S6_2025.ciscompo
-GROUP BY code_cis;
 
 
-CREATE VIEW vue_smr AS
-SELECT code_cis, valeur_smr AS valeurs_smr
-FROM SAE_S6_2025.cishassmr
-GROUP BY code_cis;
+SELECT titulaires, cis.denomination, forme_phamaceutique, voie_administration, cis.statut_administratif, nature_composant, valeur_smr, etat_commercialisation, taux_remboursement, prix_medicament_b, reference_dosage, lien_bpdm, libelle_statut, ciscpd.condition, type_generique, libelle_asmr, texte, lien_page_avis_ct 
+FROM cis
+LEFT JOIN cisciodispo ON cis.code_cis = cisciodispo.code_cis
+LEFT JOIN ciscip ON cis.code_cis = ciscip.code_cis
+LEFT JOIN ciscompo ON cis.code_cis = ciscompo.code_cis
+LEFT JOIN ciscpd ON cis.code_cis = ciscpd.code_cis
+LEFT JOIN cisgener ON cis.code_cis = cisgener.code_cis
+LEFT JOIN cishasasmr ON cis.code_cis = cishasasmr.code_cis
+LEFT JOIN cishassmr ON cis.code_cis = cishassmr.code_cis
+LEFT JOIN cisinfosimportantes ON cis.code_cis = cisinfosimportantes.code_cis
+LEFT JOIN cismitm ON cis.code_cis = cismitm.code_cis
+LEFT JOIN haslienpagect ON cishasasmr.code_dossier_has = haslienpagect.code_dossier_has
+WHERE cis.code_cis = '68546034'
