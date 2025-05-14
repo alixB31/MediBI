@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     // Initialisation de DataTables sans la barre de recherche
     $('#resultsTable').DataTable({
         searching: false,
