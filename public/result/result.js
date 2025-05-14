@@ -25,7 +25,7 @@ $(document).ready(function () {
 
     // Ouvrir la carte de détails
     $('#resultsTable tbody').on('click', 'tr', function () {
-        if (!isScreenWideEnough()) return; // Ne rien faire si trop étroit
+        if (!isScreenWideEnough()) return;
 
         const id = $(this).data('id');
         $.ajax({
