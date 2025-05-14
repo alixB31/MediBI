@@ -12,15 +12,24 @@
 // $password = $_ENV['PASSWORD'];
 
 $host = 'dolibarr.iut-rodez.fr';
-$dbname = 'SAE_S6_2025_E';
+
+$dbnameTable = 'SAE_S6_2025';
+$dbnameVue = 'SAE_S6_2025_E';
+
 $username = 'SAE_S6_2025_E';
 $password = '333ikRwV';
 
 try {
-    global $pdo;
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // Connexion à la base "vue"
+    $pdoVue = new PDO("mysql:host=$host;dbname=$dbnameVue;charset=utf8", $username, $password);
+    $pdoVue->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Connexion à la base "table"
+    $pdoTable = new PDO("mysql:host=$host;dbname=$dbnameTable;charset=utf8", $username, $password);
+    $pdoTable->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 } catch (PDOException $e) {
     die("Erreur de connexion à la base de données : " . $e->getMessage());
 }
 ?>
+

@@ -1,10 +1,4 @@
 
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -41,13 +35,13 @@ $medicaments = getMedicaments();
             <?php
             foreach ($medicaments as $medicament) {
                 echo "<tr data-id='{$medicament['code_cis']}' style='cursor:pointer;'>
-                        <td>{$medicament['code_cis']}</td>
-                        <td>{$medicament['denomination']}</td>
-                        <td>{$medicament['titulaires']}</td>
-                        <td>{$medicament['voie_administration']}</td>
-                        <td>{$medicament['substances']}</td>
-                        <td>" . (!empty($medicament['prix']) ? $medicament['prix'] . "€" : "-") . "</td>
-                    </tr>";
+                    <td>" . (!empty($medicament['code_cis']) ? $medicament['code_cis'] : '-') . "</td>
+                    <td>" . (!empty($medicament['denomination']) ? $medicament['denomination'] : '-') . "</td>
+                    <td>" . (!empty($medicament['titulaires']) ? $medicament['titulaires'] : '-') . "</td>
+                    <td>" . (!empty($medicament['voie_administration']) ? $medicament['voie_administration'] : '-') . "</td>
+                    <td>" . (!empty($medicament['substances']) ? $medicament['substances'] : '-') . "</td>
+                    <td>" . (!empty($medicament['prix']) ? $medicament['prix'] . "€" : '-') . "</td>
+                </tr>";
             }
             ?>
             </tbody>

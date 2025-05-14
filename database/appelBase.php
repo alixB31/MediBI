@@ -2,23 +2,24 @@
 include __DIR__ . '/db_connect.php';
 
 
-global $pdo;
+global $pdoTable;
+global $pdoVue;
 
 function getMedicaments()
 {
-    global $pdo;
+    global $pdoVue;
 
-    $query = $pdo->query("SELECT * FROM affichage_resultat_medicament LIMIT 10000");
-    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $query = $pdoVue->query("SELECT * FROM affichage_resultat_medicament LIMIT 100");
+    $medicaments = $query->fetchAll(PDO::FETCH_ASSOC);
 
-    return $results;
+    return $medicaments;
 }
 
 function getMedicamentById($id)
 {
-    global $pdo;
+    global $pdoVue;
 
-    $query = $pdo->prepare("SELECT * FROM affichage_resultat_medicament WHERE code_cis = :id LIMIT 1");
+    $query = $pdoVue->prepare("SELECT * FROM affichage_resultat_medicament WHERE code_cis = :id LIMIT 1");
     $query->execute(['id' => $id]);
     $medicament = $query->fetch(PDO::FETCH_ASSOC);
 
@@ -27,25 +28,10 @@ function getMedicamentById($id)
 
 function getDistinctValues($column, $table)
 {
-    global $pdo;
-    $query = $pdo->prepare("SELECT DISTINCT $column FROM $table WHERE $column IS NOT NULL AND $column != ''");
+    global $pdoTable;
+
+    $query = $pdoTable->prepare("SELECT DISTINCT $column FROM $table WHERE $column IS NOT NULL AND $column != ''");
     $query->execute();
     return $query->fetchAll(PDO::FETCH_COLUMN);
-}
-
-function getFormes() {
-    return getDistinctValues("forme_phamaceutique", "cis");
-}
-
-function getVoies() {
-    return getDistinctValues("voie_administration", "cis");
-}
-
-function getStatuts() {
-    return getDistinctValues("libelle_statut", "cisciodispo");
-}
-
-function getSubstances() {
-    return getDistinctValues("denomination_substance", "ciscompo");
 }
 ?>

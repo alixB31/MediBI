@@ -1,7 +1,9 @@
 <?php
-include '../../includes/navigation.php';
-include '../../database/search_queries.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,12 +14,19 @@ include '../../database/search_queries.php';
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
 </head>
 <body>
+<?php
+include '../../includes/navigation.php';
+include '../../database/appelBase.php';
+?>
 
 <div class="container">
     <h1>Recherche Avancée de Médicaments</h1>
     <form method="GET" action="search.php" class="search-form">
         <?php
-        global $formes, $statuts, $substances, $voies;
+        $formes = getDistinctValues("forme_phamaceutique", "cis");
+        $voies = getDistinctValues("voie_administration", "cis");
+        $statuts = getDistinctValues("libelle_statut", "cisciodispo");
+        $substances = getDistinctValues("denomination_substance", "ciscompo");
 
         $criteria = [
             "denomination" => "Dénomination",
@@ -26,7 +35,7 @@ include '../../database/search_queries.php';
             "titulaires" => "Titulaire",
             "libelle_statut" => "Statut",
             "denomination_substance" => "Substance active",
-            "valeur_smr" => "Valeur SMR"
+            "valeurs_smr" => "Valeur SMR"
         ];
 
         foreach ($criteria as $field => $label) {
