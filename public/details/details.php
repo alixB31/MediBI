@@ -18,7 +18,7 @@ if ($id > 0) {
         echo "<tr><th>Statut Administratif</th><td>{$info['statut_administratif']}</td></tr>";
         echo "<tr><th>État Commercialisation</th><td>{$info['etat_commercialisation']}</td></tr>";
         echo "<tr><th>Taux de Remboursement</th><td>{$info['taux_remboursement']}</td></tr>";
-        echo "<tr><th>Valeur SMR</th><td>{$info['valeur_smr']}</td></tr>";
+        echo "<tr><th>Valeur SMR</th><td>{$info['valeurs_smr']}</td></tr>";
         echo "<tr><th>Substance Active</th><td>{$info['substances']}</td></tr>";
         echo "<tr><th>Prix</th><td>{$info['prix']}</td></tr>";
         echo "<tr><th>Référence Dosage</th><td>{$info['reference_dosage']}</td></tr>";
