@@ -112,7 +112,7 @@ INNER JOIN SAE_S6_2025.cisgener ON cis.code_cis = cisgener.code_cis
 
 
 
-SELECT titulaires, cis.denomination, forme_phamaceutique, voie_administration, cis.statut_administratif, nature_composant, valeur_smr, etat_commercialisation, taux_remboursement, prix_medicament_b, reference_dosage, lien_bpdm, libelle_statut, ciscpd.condition, type_generique, libelle_asmr, texte, lien_page_avis_ct 
+SELECT titulaires, substances, cis.denomination, forme_phamaceutique, voie_administration, cis.statut_administratif, nature_composant, valeur_smr, etat_commercialisation, taux_remboursement, prix_medicament_b, reference_dosage, lien_bpdm, libelle_statut, ciscpd.condition, type_generique, libelle_asmr, texte, lien_page_avis_ct 
 FROM cis
 LEFT JOIN cisciodispo ON cis.code_cis = cisciodispo.code_cis
 LEFT JOIN ciscip ON cis.code_cis = ciscip.code_cis
@@ -124,4 +124,13 @@ LEFT JOIN cishassmr ON cis.code_cis = cishassmr.code_cis
 LEFT JOIN cisinfosimportantes ON cis.code_cis = cisinfosimportantes.code_cis
 LEFT JOIN cismitm ON cis.code_cis = cismitm.code_cis
 LEFT JOIN haslienpagect ON cishasasmr.code_dossier_has = haslienpagect.code_dossier_has
+LEFT JOIN liste_substances ON liste_substances.code_cis = cis.code_cis
 WHERE cis.code_cis = '68546034'
+
+
+CREATE VIEW liste_substances
+AS
+SELECT cis.code_cis, GROUP_CONCAT(DISTINCT denomination_substance SEPARATOR '; ') AS substances
+FROM SAE_S6_2025.cis
+LEFT JOIN SAE_S6_2025.ciscompo ON cis.code_cis = ciscompo.code_cis
+GROUP BY cis.code_cis
