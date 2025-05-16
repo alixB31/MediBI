@@ -1,9 +1,3 @@
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -91,7 +85,6 @@ include '../../database/appelBase.php';
         renderDualSelect("Voie d'administration", "voie_administration_filter_value", recoverDistinct($voies));
         renderDualSelect("Titulaire", "titulaires_filter_value", $titulaires);
         renderDualSelect("Statut administratif", "libelle_statut_filter_value", $statuts);
-        //renderDualSelect("Substance active", "denomination_substance_filter_value", $substances);
         renderDualSelect("Valeur SMR", "valeurs_smr_filter_value", $valeurs_smr);
         renderDualSelect("Disponibilité du médicament", "disponibilite_filter_value", $libelle_statut);
         renderDualSelect("Condition de délivrance", "condition_delivrance_filter_value", $condition_delivrance);
