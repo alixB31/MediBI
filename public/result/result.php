@@ -2,7 +2,19 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
+
+if(isset($_POST["disponibilite_filter_value"])) 
+{
+    $disponibilite = $_POST["disponibilite_filter_value"][0];
+}
+
+$disponibilite = $_POST['disponibilite_filter_value_include'];
+foreach($disponibilite as $val) {
+    var_dump($val);
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -20,6 +32,8 @@ include '../../includes/navigation.php';
 include '../../database/appelBase.php';
 
 $medicaments = getMedicaments();
+$result_disponibilite = getMedicamentByDisponibilite([], ["rupture de stock"]);
+var_dump($result_disponibilite);
 ?>
 
 <div class="container" id="mainContainer">

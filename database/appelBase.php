@@ -155,4 +155,38 @@ function getDistinctValues($column, $table, $pdo)
     $query->execute();
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
+
+function getMedicamentByDisponibilite($listValueInclude, $listValueExclude)
+{
+    global $pdoTable;
+    $sql = "SELECT code_cis FROM cisciodispo WHERE 1"; // condition par défaut
+
+    // Ajouter la condition IN pour les valeurs à inclure (libelle_statut)
+    if (count($listValueInclude) > 0) {
+        $placeholdersInclude = implode(',', array_fill(0, count($listValueInclude), '?'));
+        $sql .= " AND libelle_statut IN ($placeholdersInclude)";
+    }
+
+    // Ajouter la condition NOT IN pour les valeurs à exclure (libelle_statut)
+    if (count($listValueExclude) > 0) {
+        $placeholdersExclude = implode(',', array_fill(0, count($listValueExclude), '?'));
+        $sql .= " AND libelle_statut NOT IN ($placeholdersExclude)";
+    }
+
+    $query = $pdoTable->prepare($sql);
+
+    $index = 1;
+    foreach ($listValueInclude as $value) {
+        $query->bindValue($index++, $value, PDO::PARAM_STR);
+    }
+
+    foreach ($listValueExclude as $value) {
+        $query->bindValue($index++, $value, PDO::PARAM_STR);
+    }
+
+    $query->execute();
+
+    return $query->fetchAll(PDO::FETCH_COLUMN);
+}
+
 ?>
