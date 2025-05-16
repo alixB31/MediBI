@@ -22,7 +22,7 @@ include '../../database/appelBase.php';
 
 <div class="container">
     <h1>Recherche Avancée de Médicaments</h1>
-    <form method="GET" action="result.php" class="search-form">
+    <form method="POST" action="../result/result.php" class="search-form">
         <?php
         global $pdoVue, $pdoTable;
 
