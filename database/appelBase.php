@@ -1,18 +1,141 @@
 <?php
 include __DIR__ . '/db_connect.php';
 
+global $pdoTable, $pdoVue;
 
-global $pdoTable;
-global $pdoVue;
+function getMedicaments() {
+    global $pdoTable, $pdoVue;
 
-function getMedicaments()
-{
-    global $pdoVue;
+    $filters = $_GET;
+    // Map labels to codes for medicaments_generique filters
+    if (isset($filters['medicaments_generique_filter_value_include'])) {
+        $mappedValues = [];
+        foreach ($filters['medicaments_generique_filter_value_include'] as $label) {
+            if ($label === "Médicaments de marques") {
+                $mappedValues[] = '0';
+            } elseif ($label === "Médicaments génériques") {
+                $mappedValues = array_merge($mappedValues, ['1', '2', '4']);
+            }
+        }
+        $filters['medicaments_generique_filter_value_include'] = $mappedValues;
+    }
 
-    $query = $pdoVue->query("SELECT * FROM affichage_resultat_medicament LIMIT 100");
-    $medicaments = $query->fetchAll(PDO::FETCH_ASSOC);
+    if (isset($filters['medicaments_generique_filter_value_exclude'])) {
+        $mappedValues = [];
+        foreach ($filters['medicaments_generique_filter_value_exclude'] as $label) {
+            if ($label === "Médicaments de marques") {
+                $mappedValues[] = '0';
+            } elseif ($label === "Médicaments génériques") {
+                $mappedValues = array_merge($mappedValues, ['1', '2', '4']);
+            }
+        }
+        $filters['medicaments_generique_filter_value_exclude'] = $mappedValues;
+    }
 
-    return $medicaments;
+    $baseQuery = "SELECT DISTINCT cis.code_cis, cis.denomination, cis.titulaires, cis.voie_administration, cis.statut_administratif, ciscip.prix_medicament_b
+                  FROM cis";
+
+    $joins = [];
+    $conditions = [];
+    $params = [];
+
+    // Mappings
+    $filterMap = [
+        'denomination_filter_value' => 'denomination',
+        'forme_pharmaceutique_filter_value' => 'forme_phamaceutique',
+        'voie_administration_filter_value' => 'voie_administration',
+        'titulaires_filter_value' => 'titulaires',
+        'libelle_statut_filter_value' => 'statut_administratif',
+        'disponibilite_filter_value' => ['table' => 'cisciodispo', 'column' => 'libelle_statut', 'join' => 'cis.code_cis = cisciodispo.code_cis'],
+        'valeurs_smr_filter_value' => ['table' => 'cishassmr', 'column' => 'valeur_smr', 'join' => 'cis.code_cis = cishassmr.code_cis'],
+        'condition_delivrance_filter_value' => ['table' => 'ciscpd', 'column' => 'condition', 'join' => 'cis.code_cis = ciscpd.code_cis'],
+        'medicaments_generique_filter_value' => ['table' => 'cisgener', 'column' => 'type_generique', 'join' => 'cis.code_cis = cisgener.code_cis'],
+        'substances_filter_value' => ['table' => 'ciscompo', 'column' => 'denomination_substance', 'join' => 'cis.code_cis = ciscompo.code_cis'],
+
+    ];
+
+    // Jointures fixes
+    $joins['ciscip'] = "LEFT JOIN ciscip ON cis.code_cis = ciscip.code_cis";
+
+    $likeFilters = ['substances_filter_value', 'voie_administration_filter_value'];
+
+
+    foreach ($filters as $key => $values) {
+        if (!is_array($values) || empty($values)) continue;
+
+        $include = substr($key, -8) === '_include';
+        $exclude = substr($key, -8) === '_exclude';
+        $filterKey = str_replace(['_include', '_exclude'], '', $key);
+
+        if (!isset($filterMap[$filterKey])) continue;
+
+        $filterInfo = $filterMap[$filterKey];
+        $alias = 'cis';
+
+        if (is_array($filterInfo)) {
+            $table = $filterInfo['table'];
+            $column = $filterInfo['column'];
+            $alias = $table;
+
+            if (!isset($joins[$table])) {
+                $joins[$table] = "LEFT JOIN $table ON " . $filterInfo['join'];
+            }
+        } else {
+            $column = $filterInfo;
+        }
+
+        if (in_array($filterKey, $likeFilters)) {
+            // Construction de la condition avec LIKE pour chaque valeur
+            $likeConditions = [];
+            foreach ($values as $val) {
+                $likeConditions[] = "$alias.`$column` " . ($include ? "LIKE ?" : "NOT LIKE ?");
+                $params[] = "%$val%";
+            }
+            // Combine conditions avec OR (pour include) ou AND (pour exclude)
+            $condition = $include ? '(' . implode(' OR ', $likeConditions) . ')' : '(' . implode(' AND ', $likeConditions) . ')';
+        } else {
+            // Construction classique IN / NOT IN
+            $placeholders = implode(',', array_fill(0, count($values), '?'));
+            $condition = "$alias.`$column` " . ($include ? "IN" : "NOT IN") . " ($placeholders)";
+            $params = array_merge($params, $values);
+        }
+
+        $conditions[] = $condition;
+    }
+
+
+    foreach ($joins as $join) {
+        $baseQuery .= " $join";
+    }
+
+    if (!empty($conditions)) {
+        $baseQuery .= " WHERE " . implode(" AND ", $conditions);
+    }
+
+    $stmt = $pdoTable->prepare($baseQuery);
+    $stmt->execute($params);
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Substances via pdoVue
+    $cisCodes = array_column($results, 'code_cis');
+
+    if (!empty($cisCodes)) {
+        $placeholders = implode(',', array_fill(0, count($cisCodes), '?'));
+        $stmtSub = $pdoVue->prepare("SELECT code_cis, substances FROM liste_substances WHERE code_cis IN ($placeholders)");
+        $stmtSub->execute($cisCodes);
+        $substancesData = $stmtSub->fetchAll(PDO::FETCH_KEY_PAIR);
+    } else {
+        $substancesData = [];
+    }
+
+    foreach ($results as &$medicament) {
+        $cis = $medicament['code_cis'];
+        $medicament['substances'] = $substancesData[$cis] ?? '-';
+        $medicament['prix'] = $medicament['prix_medicament_b'] ?? '-';
+        unset($medicament['prix_medicament_b']);
+    }
+
+    return $results;
 }
 
 function getMedicamentById($id)
