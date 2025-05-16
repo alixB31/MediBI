@@ -22,23 +22,44 @@ include '../../database/appelBase.php';
 
 <div class="container">
     <h1>Recherche Avancée de Médicaments</h1>
-    <form method="GET" action="search.php" class="search-form">
+    <form method="GET" action="result.php" class="search-form">
         <?php
-        $denomination = getDistinctValues("denomination", "cis");
-        $formes = getDistinctValues("forme_phamaceutique", "cis");
-        $voies = getDistinctValues("voie_administration", "cis");
-        $titulaires = getDistinctValues("titulaires", "cis");
-        $statuts = getDistinctValues("statut_administratif", "cis");
-        //$substances = getDistinctValues("denomination_substance", "ciscompo");
-        $valeurs_smr = getDistinctValues("valeur_smr", "cishassmr");
-        $libelle_statut = getDistinctValues("libelle_statut", "cisciodispo");
-        $condition_delivrance = getDistinctValues("condition", "ciscpd");
-        $medicament_generique = getDistinctValues("type_generique", "cisgener");
-        //$substances = getDistinctValuesFromView("substances","liste_substances")
+        global $pdoVue, $pdoTable;
+
+        $denomination = getDistinctValues("denomination", "cis", $pdoTable);
+        $formes = getDistinctValues("forme_phamaceutique", "cis", $pdoTable);
+        $voies = getDistinctValues("voie_administration", "cis", $pdoTable);
+        $titulaires = getDistinctValues("titulaires", "cis", $pdoTable);
+        $statuts = getDistinctValues("statut_administratif", "cis", $pdoTable);
+        $valeurs_smr = getDistinctValues("valeur_smr", "cishassmr", $pdoTable);
+        $libelle_statut = getDistinctValues("libelle_statut", "cisciodispo", $pdoTable);
+        $condition_delivrance = getDistinctValues("condition", "ciscpd", $pdoTable);
+        $medicament_generique = getDistinctValues("type_generique", "cisgener", $pdoTable);
+        $substances = getDistinctValues("substances","liste_substances", $pdoVue);
+
+        function recoverDistinct($products) {
+            $distinctProducts = [];
+
+            foreach ($products as $row) {
+                // Découpe les substances séparées par des point virgules
+                $parts = explode(';', $row);
+                foreach ($parts as $product) {
+                    // Nettoie les espaces
+                    $product = trim($product);
+
+                    // Si la substance n'est pas vide et pas encore dans le tableau
+                    if ($product !== '' && !in_array($product, $distinctProducts)) {
+                        $distinctProducts[] = $product;
+                    }
+                }
+            }
+
+            return $distinctProducts;
+        }
 
 
         function renderDualSelect($label, $name, $values) {
-            echo "<div class='filter-group'>";
+            echo "<div>";
             echo "<label>{$label} :</label>";
             echo "<div class='filter-row'>";
             
@@ -67,7 +88,7 @@ include '../../database/appelBase.php';
 
         renderDualSelect("Dénomination", "denomination_filter_value", $denomination);
         renderDualSelect("Forme pharmaceutique", "forme_pharmaceutique_filter_value", $formes);
-        renderDualSelect("Voie d'administration", "voie_administration_filter_value", $voies);
+        renderDualSelect("Voie d'administration", "voie_administration_filter_value", recoverDistinct($voies));
         renderDualSelect("Titulaire", "titulaires_filter_value", $titulaires);
         renderDualSelect("Statut administratif", "libelle_statut_filter_value", $statuts);
         //renderDualSelect("Substance active", "denomination_substance_filter_value", $substances);
@@ -75,7 +96,7 @@ include '../../database/appelBase.php';
         renderDualSelect("Disponibilité du médicament", "disponibilite_filter_value", $libelle_statut);
         renderDualSelect("Condition de délivrance", "condition_delivrance_filter_value", $condition_delivrance);
         renderDualSelect("Médicaments génériques", "medicaments_generique_filter_value", $medicament_generique);
-        //renderDualSelect("Substances", "substances_filter_value", $substances);
+        renderDualSelect("Substances", "substances_filter_value", recoverDistinct($substances));
         ?>
         <button type="submit">Rechercher</button>
     </form>

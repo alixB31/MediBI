@@ -26,20 +26,9 @@ function getMedicamentById($id)
     return $medicament;
 }
 
-function getDistinctValues($column, $table)
+function getDistinctValues($column, $table, $pdo)
 {
-    global $pdoTable;
-
-    $query = $pdoTable->prepare("SELECT DISTINCT `$column` FROM $table WHERE `$column` IS NOT NULL AND `$column` != ''");
-    $query->execute();
-    return $query->fetchAll(PDO::FETCH_COLUMN);
-}
-
-function getDistinctValuesFromView($column, $table)
-{
-    global $pdoVue;
-
-    $query = $pdoVue->prepare("SELECT DISTINCT `$column` FROM $table WHERE `$column` IS NOT NULL AND `$column` != ''");
+    $query = $pdo->prepare("SELECT DISTINCT `$column` FROM `$table` WHERE `$column` IS NOT NULL AND `$column` != ''");
     $query->execute();
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
