@@ -34,8 +34,8 @@ include '../../database/appelBase.php';
         $valeurs_smr = getDistinctValues("valeur_smr", "cishassmr", $pdoTable);
         $libelle_statut = getDistinctValues("libelle_statut", "cisciodispo", $pdoTable);
         $condition_delivrance = getDistinctValues("condition", "ciscpd", $pdoTable);
-        $medicament_generique = getDistinctValuesGeneric("type_generique", "cisgener", $pdoTable);
-        $substances = getDistinctValuesFromView("substances","liste_substances", $pdoVue);
+        $medicament_generique = getDistinctValues("type_generique", "cisgener", $pdoTable);
+        $substances = getDistinctValues("substances","liste_substances", $pdoVue);
 
         function recoverDistinct($products) {
             $distinctProducts = [];
