@@ -28,9 +28,14 @@ include '../../database/appelBase.php';
         $formes = getDistinctValues("forme_phamaceutique", "cis");
         $voies = getDistinctValues("voie_administration", "cis");
         $titulaires = getDistinctValues("titulaires", "cis");
-        $statuts = getDistinctValues("libelle_statut", "cisciodispo");
-        $substances = getDistinctValues("denomination_substance", "ciscompo");
+        $statuts = getDistinctValues("statut_administratif", "cis");
+        //$substances = getDistinctValues("denomination_substance", "ciscompo");
         $valeurs_smr = getDistinctValues("valeur_smr", "cishassmr");
+        $libelle_statut = getDistinctValues("libelle_statut", "cisciodispo");
+        $condition_delivrance = getDistinctValues("condition", "ciscpd");
+        $medicament_generique = getDistinctValues("type_generique", "cisgener");
+        //$substances = getDistinctValuesFromView("substances","liste_substances")
+
 
         function renderDualSelect($label, $name, $values) {
             echo "<div class='filter-group'>";
@@ -64,9 +69,13 @@ include '../../database/appelBase.php';
         renderDualSelect("Forme pharmaceutique", "forme_pharmaceutique_filter_value", $formes);
         renderDualSelect("Voie d'administration", "voie_administration_filter_value", $voies);
         renderDualSelect("Titulaire", "titulaires_filter_value", $titulaires);
-        renderDualSelect("Statut", "libelle_statut_filter_value", $statuts);
-        renderDualSelect("Substance active", "denomination_substance_filter_value", $substances);
+        renderDualSelect("Statut administratif", "libelle_statut_filter_value", $statuts);
+        //renderDualSelect("Substance active", "denomination_substance_filter_value", $substances);
         renderDualSelect("Valeur SMR", "valeurs_smr_filter_value", $valeurs_smr);
+        renderDualSelect("Disponibilité du médicament", "disponibilite_filter_value", $libelle_statut);
+        renderDualSelect("Condition de délivrance", "condition_delivrance_filter_value", $condition_delivrance);
+        renderDualSelect("Médicaments génériques", "medicaments_generique_filter_value", $medicament_generique);
+        //renderDualSelect("Substances", "substances_filter_value", $substances);
         ?>
         <button type="submit">Rechercher</button>
     </form>
