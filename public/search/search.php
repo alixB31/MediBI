@@ -1,3 +1,9 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -51,6 +57,26 @@ include '../../database/appelBase.php';
             return $distinctProducts;
         }
 
+        function mapGeneriqueLabels($typesMedecine) {
+            $labels = [];
+
+            foreach ($typesMedecine as $typeMedecine) {
+                if (in_array($typeMedecine, [0])) {
+                    $label = "Médicaments de marques";
+                } elseif (in_array($typeMedecine, [1, 2, 4])) {
+                    $label = "Médicaments génériques";
+                } else {
+                    $label = "Type $typeMedecine";
+                }
+
+                // Ajout dans le tableau s’il n’existe pas déjà
+                if (!in_array($label, $labels)) {
+                    $labels[] = $label;
+                }
+            }
+
+            return $labels;
+        }
 
         function renderDualSelect($label, $name, $values) {
             echo "<div>";
@@ -88,7 +114,7 @@ include '../../database/appelBase.php';
         renderDualSelect("Valeur SMR", "valeurs_smr_filter_value", $valeurs_smr);
         renderDualSelect("Disponibilité du médicament", "disponibilite_filter_value", $libelle_statut);
         renderDualSelect("Condition de délivrance", "condition_delivrance_filter_value", $condition_delivrance);
-        renderDualSelect("Médicaments génériques", "medicaments_generique_filter_value", $medicament_generique);
+        renderDualSelect("Médicaments génériques", "medicaments_generique_filter_value", mapGeneriqueLabels($medicament_generique));
         renderDualSelect("Substances", "substances_filter_value", recoverDistinct($substances));
         ?>
         <button type="submit">Rechercher</button>

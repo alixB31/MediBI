@@ -28,32 +28,7 @@ function getMedicamentById($id)
 
 function getDistinctValues($column, $table, $pdo)
 {
-    global $pdoTable;
-
-    $query = $pdoTable->prepare("SELECT DISTINCT `$column` FROM $table WHERE `$column` IS NOT NULL");
-    $query->execute();
-    return $query->fetchAll(PDO::FETCH_COLUMN);
-}
-
-function getDistinctValuesGeneric($column, $table)
-{
-    global $pdoTable;
-
-    $query = $pdoTable->prepare("SELECT DISTINCT CASE 
-        WHEN `$column` = 0 THEN 'Médicaments de marques'
-        WHEN `$column` IN (1, 2, 4) THEN 'Médicaments génériques'
-    END AS medicament_generique
-    FROM $table
-    ");
-    $query->execute();
-    return $query->fetchAll(PDO::FETCH_COLUMN);
-}
-
-function getDistinctValuesFromView($column, $table)
-{
-    global $pdoVue;
-
-    $query = $pdoVue->prepare("SELECT DISTINCT `$column` FROM $table WHERE `$column` IS NOT NULL");
+    $query = $pdo->prepare("SELECT DISTINCT `$column` FROM `$table` WHERE `$column` IS NOT NULL");
     $query->execute();
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
