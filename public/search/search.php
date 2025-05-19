@@ -22,7 +22,7 @@ include '../../database/appelBase.php';
 
 <div class="container">
     <h1>Recherche Avancée de Médicaments</h1>
-    <form method="GET" action="../result/result.php" class="search-form">
+    <form method="POST" action="../result/result.php" class="search-form">
         <?php
         global $pdoVue, $pdoTable;
 
@@ -57,7 +57,7 @@ include '../../database/appelBase.php';
             return $distinctProducts;
         }
 
-        function mapGeneriqueLabels($typesMedecine) {
+        function genericFormat($typesMedecine) {
             $labels = [];
 
             foreach ($typesMedecine as $typeMedecine) {
@@ -114,8 +114,11 @@ include '../../database/appelBase.php';
         renderDualSelect("Valeur SMR", "valeurs_smr_filter_value", $valeurs_smr);
         renderDualSelect("Disponibilité du médicament", "disponibilite_filter_value", $libelle_statut);
         renderDualSelect("Condition de délivrance", "condition_delivrance_filter_value", $condition_delivrance);
-        renderDualSelect("Médicaments génériques", "medicaments_generique_filter_value", mapGeneriqueLabels($medicament_generique));
+        renderDualSelect("Médicaments génériques", "medicaments_generique_filter_value", genericFormat($medicament_generique));
         renderDualSelect("Substances", "substances_filter_value", recoverDistinct($substances));
+        
+        
+
         ?>
         <button type="submit">Rechercher</button>
     </form>

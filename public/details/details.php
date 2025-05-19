@@ -6,23 +6,31 @@ include '../../database/appelBase.php';
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($id > 0) {
-    $info = getMedicamentById($id);
+    $detail = getDetail($id)[0];
 
-    if ($info) {
+    if ($detail) {
         echo "<table class='details-table'>";
-        echo "<tr><th>Code CIS</th><td>" . (!empty($info['code_cis']) ? $info['code_cis'] : "-") . "</td></tr>";
-        echo "<tr><th>Dénomination</th><td>" . (!empty($info['denomination']) ? $info['denomination'] : "-") . "</td></tr>";
-        echo "<tr><th>Titulaire</th><td>" . (!empty($info['titulaires']) ? $info['titulaires'] : "-") . "</td></tr>";
-        echo "<tr><th>Forme Pharmaceutique</th><td>" . (!empty($info['forme_phamaceutique']) ? $info['forme_phamaceutique'] : "-") . "</td></tr>";
-        echo "<tr><th>Voie d'Administration</th><td>" . (!empty($info['voie_administration']) ? $info['voie_administration'] : "-") . "</td></tr>";
-        echo "<tr><th>Statut Administratif</th><td>" . (!empty($info['statut_administratif']) ? $info['statut_administratif'] : "-") . "</td></tr>";
-        echo "<tr><th>État Commercialisation</th><td>" . (!empty($info['etat_commercialisation']) ? $info['etat_commercialisation'] : "-") . "</td></tr>";
-        echo "<tr><th>Taux de Remboursement</th><td>" . (!empty($info['taux_remboursement']) ? $info['taux_remboursement'] : "-") . "</td></tr>";
-        echo "<tr><th>Valeur SMR</th><td>" . (!empty($info['valeurs_smr']) ? $info['valeurs_smr'] : "-") . "</td></tr>";
-        echo "<tr><th>Substance Active</th><td>" . (!empty($info['substances']) ? $info['substances'] : "-") . "</td></tr>";
-        echo "<tr><th>Prix</th><td>" . (!empty($info['prix']) ? $info['prix'] . "€" : "-") . "</td></tr>";
-        echo "<tr><th>Référence Dosage</th><td>" . (!empty($info['reference_dosage']) ? $info['reference_dosage'] : "-") . "</td></tr>";
-        echo "<tr><th>Type de Médicament</th><td>" . (!empty($info['type_medicament']) ? $info['type_medicament'] : "-") . "</td></tr>";
+        echo "<tr><th>Code CIS</th><td>" . (!empty($detail['code_cis'][0]) ? $detail['code_cis'] : "-") . "</td></tr>";
+        echo "<tr><th>Dénomination</th><td>" . (!empty($detail['denomination']) ? $detail['denomination'] : "-") . "</td></tr>";
+        echo "<tr><th>Titulaire</th><td>" . (!empty($detail['titulaires']) ? $detail['titulaires'] : "-") . "</td></tr>";
+        echo "<tr><th>Forme Pharmaceutique</th><td>" . (!empty($detail['forme_phamaceutique']) ? $detail['forme_phamaceutique'] : "-") . "</td></tr>";
+        echo "<tr><th>Voie d'Administration</th><td>" . (!empty($detail['voie_administration']) ? $detail['voie_administration'] : "-") . "</td></tr>";
+        echo "<tr><th>Statut Administratif</th><td>" . (!empty($detail['statut_administratif']) ? $detail['statut_administratif'] : "-") . "</td></tr>";
+        echo "<tr><th>Date_amm </th><td>" . (!empty($detail['date_amm']) ? $detail['date_amm'] : "-") . "</td></tr>";
+        echo "<tr><th>Nature du composant </th><td>" . (!empty($detail['nature_composant']) ? $detail['nature_composant'] : "-") . "</td></tr>";
+        echo "<tr><th>Valeur SMR</th><td>" . (!empty($detail['valeurs_smr']) ? $detail['valeurs_smr'] : "-") . "</td></tr>";
+        echo "<tr><th>État Commercialisation</th><td>" . (!empty($detail['etat_commercialisation']) ? $detail['etat_commercialisation'] : "-") . "</td></tr>";
+        echo "<tr><th>Prix</th><td>" . (!empty($detail['prix_medicament_b']) ? $detail['prix_medicament_b'] . "€" : "-") . "</td></tr>";
+        echo "<tr><th>Taux de Remboursement</th><td>" . (!empty($detail['taux_remboursement']) ? $detail['taux_remboursement'] : "-") . "</td></tr>";
+        echo "<tr><th>Référence Dosage</th><td>" . (!empty($detail['reference_dosage']) ? $detail['reference_dosage'] : "-") . "</td></tr>";
+        echo "<tr><th>Lien BPDM</th><td><a href=" . (!empty($detail['lien_bpdm']) ? $detail['lien_bpdm'] : "-") . "></a></td></tr>";
+        echo "<tr><th>Disponibilité </th><td>" . (!empty($detail['libelle_statut']) ? $detail['libelle_statut'] : "-") . "</td></tr>";
+        echo "<tr><th>Condition de prescription</th><td>" . (!empty($detail['condition']) ? $detail['condition'] : "-") . "</td></tr>";
+        echo "<tr><th>Type de Médicament</th><td>" . (!empty($detail['type_generique']) ? $detail['type_generique'] : "-") . "</td></tr>";
+        echo "<tr><th>Libelle ASMR</th><td>" . (!empty($detail['libelle_asmr']) ? $detail['libelle_asmr'] : "-") . "</td></tr>";
+        echo "<tr><th>Texte </th><td>" . (!empty($detail['texte']) ? $detail['texte'] : "-") . "</td></tr>";
+        echo "<tr><th>Lien page avis CT</th><td>" . (!empty($detail['lien_page_avis_ct']) ? $detail['lien_page_avis_ct'] : "-") . "</td></tr>";
+        echo "<tr><th>Substance Active</th><td>" . (!empty($detail['liste_substances']) ? $detail['liste_substances'] : "-") . "</td></tr>";
         echo "</table>";
     } else {
         echo "<p>Médicament non trouvé.</p>";
