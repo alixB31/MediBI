@@ -128,7 +128,7 @@ include '../../includes/navigation.php';
             <tr>
                 <th>Code CIS</th>
                 <th>Dénomination</th>
-                <th>Libelle</th>
+                <th>Quantité</th>
                 <th>Type générique</th>
                 <th>Taux de remboursement</th>
             </tr>

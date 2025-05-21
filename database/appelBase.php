@@ -63,6 +63,9 @@ function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters =
 
 function getMedecine($code_cis) {
     global $pdoVue;
+       if (empty($code_cis)) {
+        return [];
+    }
     $placeholders = implode(',', array_fill(0, count($code_cis), '?'));
 
     $sql = "
