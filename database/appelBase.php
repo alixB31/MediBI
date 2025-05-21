@@ -21,41 +21,43 @@ function getDistinctValues($column, $table, $pdo)
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 
-function getCodeCisOfSearch($table, $filterColumn, $includeValues = [], $excludeValues = []) {
+function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters = []) {
     global $pdoTable;
 
-    // Sécurité : éviter les injections SQL (table et colonnes uniquement via whitelist idéalement)
     $allowedTables = ['cis', 'cisciodispo', 'cishassmr', 'cisgener', 'ciscpd', 'liste_substances'];
     $allowedColumns = ['titulaires', 'denomination', 'forme_phamaceutique', 'voie_administration', 'statut_administratif', 'valeur_smr', 'libelle_statut', 'condition', 'type_generique', 'substances'];
 
-    if (!in_array($table, $allowedTables) || !in_array($filterColumn, $allowedColumns)) {
-        throw new InvalidArgumentException("Table ou colonne non autorisée.");
+    if (!in_array($table, $allowedTables)) {
+        throw new InvalidArgumentException("Table non autorisée.");
     }
 
-    $sql = "SELECT code_cis FROM $table WHERE 1";
-
+    $sql = "SELECT code_cis FROM $table WHERE 1=1";
     $params = [];
 
-    if (count($includeValues) > 0) {
-        $placeholders = implode(',', array_fill(0, count($includeValues), '?'));
-        $sql .= " AND $filterColumn IN ($placeholders)";
-        $params = array_merge($params, $includeValues);
+    // Filtres d'inclusion
+    foreach ($includeFilters as $column => $values) {
+        if (!in_array($column, $allowedColumns) || !is_array($values)) continue;
+
+        $placeholders = implode(',', array_fill(0, count($values), '?'));
+        $sql .= " AND $column IN ($placeholders)";
+        $params = array_merge($params, $values);
     }
 
-    if (count($excludeValues) > 0) {
-        $placeholders = implode(',', array_fill(0, count($excludeValues), '?'));
-        $sql .= " AND $filterColumn NOT IN ($placeholders)";
-        $params = array_merge($params, $excludeValues);
+    // Filtres d'exclusion
+    foreach ($excludeFilters as $column => $values) {
+        if (!in_array($column, $allowedColumns) || !is_array($values)) continue;
+
+        $placeholders = implode(',', array_fill(0, count($values), '?'));
+        $sql .= " AND $column NOT IN ($placeholders)";
+        $params = array_merge($params, $values);
     }
 
     $query = $pdoTable->prepare($sql);
-
     foreach ($params as $index => $value) {
         $query->bindValue($index + 1, $value, PDO::PARAM_STR);
     }
 
     $query->execute();
-
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 

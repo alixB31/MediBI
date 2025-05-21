@@ -10,10 +10,10 @@ if ($id > 0) {
     if ($detail) {
         if ($detail['type_generique'] === 0) {
             $detail['type_generique'] = "Médicaments de marques";
-        } elseif ($detail['type_generique'] === 1) {
+        } elseif ($detail['type_generique'] === 1 || $detail['type_generique'] === 2 || $detail['type_generique'] === 4) {
             $detail['type_generique'] = "Médicaments génériques";
         } else {
-            $detail['type_generique'] = "Type $typeMedecine";
+            $detail['type_generique'] = "-";
         }
         echo "<table class='details-table'>";
         echo "<tr><th>Code CIS</th><td>" . (!empty($detail['code_cis']) ? $detail['code_cis'] : "-") . "</td></tr>";

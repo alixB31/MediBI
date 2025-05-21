@@ -35,34 +35,47 @@ function getResultOfSearch() {
         'valeurs_smr'   => ['cishassmr', 'valeur_smr'],
         'denomination'  => ['cis', 'denomination'],
         'titulaires'    => ['cis', 'titulaires'],
-        'forme_pharmaceutique'         => ['cis', 'forme_phamaceutique'],
-        'voie_administration'          => ['cis', 'voie_administration'],
-        'libelle_statut'          => ['cis', 'statut_administratif'],
-        'condition_delivrance'     => ['ciscpd', 'condition'],
-        'medicaments_generique'     => ['cisgener', 'type_generique'],
-        'substances'     => ['liste_substances', 'substances']
+        'forme_pharmaceutique' => ['cis', 'forme_phamaceutique'],
+        'voie_administration'  => ['cis', 'voie_administration'],
+        'libelle_statut'       => ['cis', 'statut_administratif'],
+        'condition_delivrance' => ['ciscpd', 'condition'],
+        'medicaments_generique' => ['cisgener', 'type_generique'],
+        'substances'            => ['liste_substances', 'substances']
     ];
 
-    foreach ($filters as $filterKey => $filterValue) {
-        $table = $filterValue[0];
-        $column = $filterValue[1];
+    // On regroupe les filtres par table
+    $groupedFilters = [];
 
+    foreach ($filters as $filterKey => [$table, $column]) {
         $includeKey = $filterKey . '_filter_value_include';
         $excludeKey = $filterKey . '_filter_value_exclude';
 
-        
         $includeValues = !empty($_POST[$includeKey]) ? $_POST[$includeKey] : [];
         $excludeValues = !empty($_POST[$excludeKey]) ? $_POST[$excludeKey] : [];
 
-        if (!empty($includeValues) || !empty($excludeValues)) {
-            var_dump($_POST[$includeKey]);
-            // Récupération des codes CIS filtrés
-            array_push($codeCisList, getCodeCisOfSearch($table, $column, $includeValues, $excludeValues) );
-            break; // un seul filtre à la fois
+        //var_dump($includeValues);
+        if (!empty($includeValues)) {
+            $groupedFilters[$table]['include'][$column] = $includeValues;
+        }
+
+        if (!empty($excludeValues)) {
+            $groupedFilters[$table]['exclude'][$column] = $excludeValues;
         }
     }
+
+    // Pour chaque table, on applique les filtres groupés
+    foreach ($groupedFilters as $table => $filters) {
+        $include = $filters['include'] ?? [];
+        $exclude = $filters['exclude'] ?? [];
+
+        $cis = getCodeCisOfSearchMulti($table, $include, $exclude);
+        $codeCisList[] = $cis;
+    }
+
+    // Intersection des résultats entre toutes les tables
     $codeCisList = getEqualCodeCis($codeCisList);
-    
+
+    // Récupération des données complètes
     $medicaments = getMedecine($codeCisList);
     var_dump(count($medicaments));
 
@@ -129,15 +142,15 @@ include '../../includes/navigation.php';
             foreach ($medicaments as $medicament) {
                 if ($medicament['type_generique'] === 0) {
                     $medicament['type_generique'] = "Médicaments de marques";
-                } elseif ($medicament['type_generique'] === 1) {
+                } elseif ($medicament['type_generique'] === 1 || $medicament['type_generique'] === 2 || $medicament['type_generique'] === 4) {
                     $medicament['type_generique'] = "Médicaments génériques";
                 } else {
                     $medicament['type_generique'] = "-";
                 }
                 echo "<tr data-id='{$medicament['code_cis']}' style='cursor:pointer;'>
                     <td>" . (!empty($medicament['code_cis']) ? $medicament['code_cis'] : '-') . "</td>
-                    <td>" . (!empty($medicament['libelle']) ? $medicament['libelle'] : '-') . "</td>
                     <td>" . (!empty($medicament['denomination']) ? $medicament['denomination'] : '-') . "</td>
+                    <td>" . (!empty($medicament['libelle']) ? $medicament['libelle'] : '-') . "</td>
                     <td>" . (!empty($medicament['type_generique']) ? $medicament['type_generique'] : '-') . "</td>
                     <td>" . (!empty($medicament['taux_remboursement']) ? $medicament['taux_remboursement'] : '-') . "</td>
                 </tr>";
