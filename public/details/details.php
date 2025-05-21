@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="./result.css">
-
 <?php
 include '../../database/appelBase.php';
 

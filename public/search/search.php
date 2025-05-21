@@ -10,7 +10,6 @@ error_reporting(E_ALL);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recherche Avancée de Médicaments</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="search.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
 </head>
@@ -79,13 +78,13 @@ include '../../database/appelBase.php';
         }
 
         function renderDualSelect($label, $name, $values) {
-            echo "<div>";
-            echo "<label>{$label} :</label>";
+            echo "<div class='filter-group'>";
+            echo "<h3>{$label} :</h3>";
             echo "<div class='filter-row'>";
             
             // Inclure
             echo "<div class='filter-column'>";
-            echo "<label>Inclure :</label>";
+            echo "<span>Inclure :</span>";
             echo "<select name='{$name}_include[]' class='multi-select' multiple>";
             foreach ($values as $val) {
                 echo "<option value='{$val}'>{$val}</option>";
@@ -95,7 +94,7 @@ include '../../database/appelBase.php';
 
             // Exclure
             echo "<div class='filter-column'>";
-            echo "<label>Exclure :</label>";
+            echo "<span>Exclure :</span>";
             echo "<select name='{$name}_exclude[]' class='multi-select' multiple>";
             foreach ($values as $val) {
                 echo "<option value='{$val}'>{$val}</option>";
@@ -104,6 +103,7 @@ include '../../database/appelBase.php';
             echo "</div>";
 
             echo "</div></div>";
+            echo "<div class='separator'></div>";
         }
 
         renderDualSelect("Dénomination", "denomination_filter_value", $denomination);
@@ -120,7 +120,9 @@ include '../../database/appelBase.php';
         
 
         ?>
-        <button type="submit">Rechercher</button>
+        <div class="form-footer">
+            <button type="submit">Rechercher</button>
+        </div>
     </form>
 </div>
 
