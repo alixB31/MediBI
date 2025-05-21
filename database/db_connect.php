@@ -1,23 +1,16 @@
 <?php
 // database/db_connect.php
 
-// require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
-// $dotenv->load();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
-// $host = $_ENV['HOST_URL'];
-// $dbname = $_ENV['DB_NAME'];
-// $username = $_ENV['USERNAME'];
-// $password = $_ENV['PASSWORD'];
-
-$host = 'dolibarr.iut-rodez.fr';
-
-$dbnameTable = 'SAE_S6_2025';
-$dbnameVue = 'SAE_S6_2025_E';
-
-$username = 'SAE_S6_2025_E';
-$password = '333ikRwV';
+$host = $_ENV['HOST_URL'];
+$dbnameTable = $_ENV['DB_NAME'];
+$dbnameVue = $_ENV['DB_NAME_VUE'];
+$username = $_ENV['USERNAME'];
+$password = $_ENV['PASSWORD'];
 
 try {
     // Connexion à la base "vue"
@@ -32,4 +25,3 @@ try {
     die("Erreur de connexion à la base de données : " . $e->getMessage());
 }
 ?>
-
