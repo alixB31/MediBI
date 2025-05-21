@@ -1,18 +1,6 @@
 <?php
 include __DIR__ . '/db_connect.php';
 
-global $pdoTable, $pdoVue;
-
-function getMedicamentById($id)
-{
-    global $pdoVue;
-
-    $query = $pdoVue->prepare("SELECT * FROM affichage_resultat_medicament WHERE code_cis = :id LIMIT 1");
-    $query->execute(['id' => $id]);
-    $medicament = $query->fetch(PDO::FETCH_ASSOC);
-
-    return $medicament;
-}
 
 function getDistinctValues($column, $table, $pdo)
 {
@@ -21,51 +9,51 @@ function getDistinctValues($column, $table, $pdo)
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 
-function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters = []) {
-    global $pdoTable;
+function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters = [], $pdo) {
 
-    $allowedTables = ['cis', 'cisciodispo', 'cishassmr', 'cisgener', 'ciscpd', 'liste_substances'];
-    $allowedColumns = ['titulaires', 'denomination', 'forme_phamaceutique', 'voie_administration', 'statut_administratif', 'valeur_smr', 'libelle_statut', 'condition', 'type_generique', 'substances'];
-
-    if (!in_array($table, $allowedTables)) {
-        throw new InvalidArgumentException("Table non autorisée.");
-    }
-
-    $sql = "SELECT code_cis FROM $table WHERE 1=1";
+    $sql = "SELECT code_cis FROM $table WHERE 1";
     $params = [];
 
     // Filtres d'inclusion
     foreach ($includeFilters as $column => $values) {
-        if (!in_array($column, $allowedColumns) || !is_array($values)) continue;
-
-        $placeholders = implode(',', array_fill(0, count($values), '?'));
-        $sql .= " AND $column IN ($placeholders)";
-        $params = array_merge($params, $values);
+        if (!empty($values)) {
+            $placeholders = implode(',', array_fill(0, count($values), '?'));
+            $sql .= " AND $column IN ($placeholders)";
+            $params = array_merge($params, $values);
+        }
     }
 
     // Filtres d'exclusion
     foreach ($excludeFilters as $column => $values) {
-        if (!in_array($column, $allowedColumns) || !is_array($values)) continue;
-
-        $placeholders = implode(',', array_fill(0, count($values), '?'));
-        $sql .= " AND $column NOT IN ($placeholders)";
-        $params = array_merge($params, $values);
+        if (!empty($values)) {
+            $placeholders = implode(',', array_fill(0, count($values), '?'));
+            $sql .= " AND $column NOT IN ($placeholders)";
+            $params = array_merge($params, $values);
+        }
     }
 
-    $query = $pdoTable->prepare($sql);
+    $query = $pdo->prepare($sql);
     foreach ($params as $index => $value) {
         $query->bindValue($index + 1, $value, PDO::PARAM_STR);
     }
-
+    debugQuery($sql,$params);
     $query->execute();
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 
+function debugQuery($sql, $params) {
+    foreach ($params as $param) {
+        $value = is_numeric($param) ? $param : "'" . addslashes($param) . "'";
+        $sql = preg_replace('/\?/', $value, $sql, 1);
+    }
+    var_dump($sql);
+}
+
 function getMedecine($code_cis) {
     global $pdoVue;
-       if (empty($code_cis)) {
-        return [];
-    }
+    // if(empty($code_cis)) {
+    //     return [];
+    // }
     $placeholders = implode(',', array_fill(0, count($code_cis), '?'));
 
     $sql = "
@@ -93,7 +81,7 @@ function getDetail($code_cis) {
     global $pdoTable;
 
     $sql = "
-        SELECT cis.code_cis, titulaires, substances, date_amm, cis.denomination, forme_phamaceutique, voie_administration, cis.statut_administratif, nature_composant, valeur_smr, etat_commercialisation, taux_remboursement, prix_medicament_b, reference_dosage, lien_bpdm, cisciodispo.libelle_statut, ciscpd.condition, type_generique, libelle_asmr, texte, lien_page_avis_ct, substances 
+        SELECT cis.code_cis, titulaires, substances, date_amm, cis.denomination, forme_phamaceutique, voie_administration, cis.statut_administratif, nature_composant, valeur_smr, etat_commercialisation, taux_remboursement, prix_medicament_b, reference_dosage, lien_bpdm, cisciodispo.libelle_statut, ciscpd.condition, type_generique, libelle_asmr, texte, lien_page_avis_ct 
         FROM cis
         LEFT JOIN cisciodispo ON cis.code_cis = cisciodispo.code_cis
         LEFT JOIN ciscip ON cis.code_cis = ciscip.code_cis
