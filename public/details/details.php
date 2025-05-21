@@ -2,19 +2,30 @@
 
 <?php
 include '../../database/appelBase.php';
-
+function genericFormat($typesMedecine) {
+    $result = "";
+    switch($typesMedecine) {
+        case "0" :
+            $result = "princeps";
+            break;
+        case "1" : 
+            $result = "générique";
+            break;
+        case "2":
+            $result = "générique par complémentarité posologique";
+            break;
+        case "4" : 
+            $result = "générique substituable";
+            break;
+    }
+    return $result;
+}
 $code_cis = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 
 $detail = getDetail($code_cis)[0];
 if ($detail) {
-    // if ($detail['type_generique'] === 0) {
-    //     $detail['type_generique'] = "Médicaments de marques";
-    // } elseif ($detail['type_generique'] === 1 || $detail['type_generique'] === 2 || $detail['type_generique'] === 4) {
-    //     $detail['type_generique'] = "Médicaments génériques";
-    // } else {
-    //     $detail['type_generique'] = "-";
-    // }
+    $detail['type_generique'] = genericFormat($detail['type_generique']);
     echo "<table class='details-table'>";
     echo "<tr><th>Code CIS</th><td>" . (!empty($detail['code_cis']) ? $detail['code_cis'] : "-") . "</td></tr>";
     echo "<tr><th>Dénomination</th><td>" . (!empty($detail['denomination']) ? $detail['denomination'] : "-") . "</td></tr>";

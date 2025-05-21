@@ -3,7 +3,24 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include '../../database/appelBase.php';
-
+function genericFormat($typesMedecine) {
+    $result = "";
+    switch($typesMedecine) {
+        case "0" :
+            $result = "princeps";
+            break;
+        case "1" : 
+            $result = "générique";
+            break;
+        case "2":
+            $result = "générique par complémentarité posologique";
+            break;
+        case "4" : 
+            $result = "générique substituable";
+            break;
+    }
+    return $result;
+}
 function getResultOfSearch() {
     global $pdoTable, $pdoVue;
     $medicaments = [];
@@ -110,13 +127,7 @@ function hasNoEmptyFilters(array $filters): bool {
                 
 
             foreach ($medicaments as $medicament) {
-                // if ($medicament['type_generique'] === 0) {
-                //     $medicament['type_generique'] = "Médicaments de marques";
-                // } elseif ($medicament['type_generique'] === 1 || $medicament['type_generique'] === 2 || $medicament['type_generique'] === 4) {
-                //     $medicament['type_generique'] = "Médicaments génériques";
-                // } else {
-                //     $medicament['type_generique'] = "-";
-                // }
+                $medicament['type_generique'] = genericFormat($medicament['type_generique']);
                 echo "<tr data-id='{$medicament['code_cis']}' style='cursor:pointer;'>
                     <td>" . (isset($medicament['code_cis']) ? $medicament['code_cis'] : '-') . "</td>
                     <td>" . (isset($medicament['denomination']) ? $medicament['denomination'] : '-') . "</td>

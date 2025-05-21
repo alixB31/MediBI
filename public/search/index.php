@@ -39,7 +39,7 @@
             renderDualSelect("Valeur SMR", "valeurs_smr_filter_value", $valeurs_smr);
             renderDualSelect("Disponibilité du médicament", "disponibilite_filter_value", $libelle_statut);
             renderDualSelect("Condition de délivrance", "condition_delivrance_filter_value", $condition_delivrance);
-            renderDualSelect("Médicaments génériques", "medicaments_generique_filter_value", genericFormat($medicament_generique));
+            renderDualSelect("Médicaments génériques", "medicaments_generique_filter_value", $medicament_generique);
             renderDualSelect("Substances", "substances_filter_value", recoverDistinct($substances));
             
             ?>
@@ -66,22 +66,22 @@
         }
 
         function genericFormat($typesMedecine) {
-            $labels = [];
-
-            foreach ($typesMedecine as $typeMedecine) {
-                if (in_array($typeMedecine, [0])) {
-                    $label = "Médicaments de marques";
-                } elseif (in_array($typeMedecine, [1, 2, 4])) {
-                    $label = "Médicaments génériques";
-                }
-
-                // Ajout dans le tableau s’il n’existe pas déjà
-                if (!in_array($label, $labels)) {
-                    $labels[] = $label;
-                }
+            $result = "";
+            switch($typesMedecine) {
+                case "0" :
+                    $result = "princeps";
+                    break;
+                case "1" : 
+                    $result = "générique";
+                    break;
+                case "2":
+                    $result = "générique par complémentarité posologique";
+                    break;
+                case "4" : 
+                    $result = "générique substituable";
+                    break;
             }
-
-            return $labels;
+            return $result;
         }
 
         function renderDualSelect($label, $name, $values) {
@@ -94,8 +94,9 @@
             echo "<label>Inclure :</label>";
             echo "<select name='{$name}_include[]' class='multi-select' multiple>";
             foreach ($values as $val) {
-                echo "<option value='{$val}'>{$val}</option>";
+                echo "<option value='{$val}'>" . genericFormat($val) . "</option>";
             }
+
             echo "</select>";
             echo "</div>";
 
@@ -104,7 +105,7 @@
             echo "<label>Exclure :</label>";
             echo "<select name='{$name}_exclude[]' class='multi-select' multiple>";
             foreach ($values as $val) {
-                echo "<option value='{$val}'>{$val}</option>";
+                echo "<option value='{$val}'>" . genericFormat($val) . "</option>";
             }
             echo "</select>";
             echo "</div>";
