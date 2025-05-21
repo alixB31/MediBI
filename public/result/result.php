@@ -35,10 +35,12 @@ function getResultOfSearch() {
         'valeurs_smr'   => ['cishassmr', 'valeur_smr'],
         'denomination'  => ['cis', 'denomination'],
         'titulaires'    => ['cis', 'titulaires'],
-        'forme'         => ['cis', 'forme_phamaceutique'],
-        'voie'          => ['cis', 'voie_administration'],
-        'generique'     => ['cisgener', 'type_generique'],
-        'substance'     => ['liste_substances', 'substances']
+        'forme_pharmaceutique'         => ['cis', 'forme_phamaceutique'],
+        'voie_administration'          => ['cis', 'voie_administration'],
+        'libelle_statut'          => ['cis', 'statut_administratif'],
+        'condition_delivrance'     => ['ciscpd', 'condition'],
+        'medicaments_generique'     => ['cisgener', 'type_generique'],
+        'substances'     => ['liste_substances', 'substances']
     ];
 
     foreach ($filters as $filterKey => $filterValue) {
@@ -48,10 +50,12 @@ function getResultOfSearch() {
         $includeKey = $filterKey . '_filter_value_include';
         $excludeKey = $filterKey . '_filter_value_exclude';
 
+        
         $includeValues = !empty($_POST[$includeKey]) ? $_POST[$includeKey] : [];
         $excludeValues = !empty($_POST[$excludeKey]) ? $_POST[$excludeKey] : [];
 
         if (!empty($includeValues) || !empty($excludeValues)) {
+            var_dump($_POST[$includeKey]);
             // Récupération des codes CIS filtrés
             array_push($codeCisList, getCodeCisOfSearch($table, $column, $includeValues, $excludeValues) );
             break; // un seul filtre à la fois
@@ -120,8 +124,16 @@ include '../../includes/navigation.php';
             <?php
 
             $medicaments = getResultOfSearch();
+                
 
             foreach ($medicaments as $medicament) {
+                if ($medicament['type_generique'] === 0) {
+                    $medicament['type_generique'] = "Médicaments de marques";
+                } elseif ($medicament['type_generique'] === 1) {
+                    $medicament['type_generique'] = "Médicaments génériques";
+                } else {
+                    $medicament['type_generique'] = "-";
+                }
                 echo "<tr data-id='{$medicament['code_cis']}' style='cursor:pointer;'>
                     <td>" . (!empty($medicament['code_cis']) ? $medicament['code_cis'] : '-') . "</td>
                     <td>" . (!empty($medicament['libelle']) ? $medicament['libelle'] : '-') . "</td>
