@@ -15,7 +15,8 @@
 ?>
 
 <div class="container">
-    <h1>MEDIBI - Recherche Avancée de Médicaments</h1>
+   <div class="recherche"> 
+        <h1>MEDIBI - Recherche Avancée de Médicaments</h1>
         <form method="POST" action="../result/result.php" class="search-form">
             <?php
             global $pdoVue, $pdoTable;
@@ -45,6 +46,7 @@
             ?>
             <button type="submit">Rechercher</button>
         </form>
+    </div>
 </div>
 <?php
         function recoverDistinct($products) {
