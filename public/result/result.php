@@ -140,6 +140,23 @@ function hasNoEmptyFilters(array $filters): bool {
             ?>
             </tbody>
         </table>
+        <form method="post" action="../search/index.php">
+            <button type="submit">Nouvelle recherche</button>
+        </form>
+        <form id="modify-search" method="POST" action="../search/index.php">
+            <?php
+            foreach ($_POST as $key => $value) {
+                if (is_array($value)) {
+                    foreach ($value as $v) {
+                        echo "<input type='hidden' name='{$key}[]' value=\"" . htmlspecialchars($v) . "\">";
+                    }
+                } else {
+                    echo "<input type='hidden' name='{$key}' value=\"" . htmlspecialchars($value) . "\">";
+                }
+            }
+            ?>
+            <button type="submit">Modifier la recherche</button>
+        </form>
     </div>
 
     <div id="detailsPanel">
@@ -147,7 +164,6 @@ function hasNoEmptyFilters(array $filters): bool {
         <div id="detailsContent">Cliquez sur un médicament pour voir les détails.</div>
     </div>
 </div>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="result.js"></script>
