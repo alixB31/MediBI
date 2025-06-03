@@ -46,14 +46,14 @@ function debugQuery($sql, $params) {
         $value = is_numeric($param) ? $param : "'" . addslashes($param) . "'";
         $sql = preg_replace('/\?/', $value, $sql, 1);
     }
-    var_dump($sql);
+    // var_dump($sql);
 }
 
 function getMedecine($code_cis) {
     global $pdoVue;
-    // if(empty($code_cis)) {
-    //     return [];
-    // }
+    if(empty($code_cis)) {
+        return [];
+    }
     $placeholders = implode(',', array_fill(0, count($code_cis), '?'));
 
     $sql = "

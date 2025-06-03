@@ -17,6 +17,13 @@
 <div class="container">
    <div class="recherche"> 
         <h1>MEDIBI - Recherche Avancée de Médicaments</h1>
+        <?php
+        session_start();
+        if (!empty($_SESSION['error'])) {
+            echo "<p style='color:red; font-weight:bold;'>" . htmlspecialchars($_SESSION['error']) . "</p>";
+            unset($_SESSION['error']);
+        }
+        ?>
         <form method="POST" action="../result/result.php" class="search-form">
             <?php
             global $pdoVue, $pdoTable;
