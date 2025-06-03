@@ -3,29 +3,26 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include '../../database/appelBase.php';
-
-// if (isset($_POST['disponibilite_filter_value_include']) && isset($_POST['disponibilite_filter_value_exclude'])) {
-//     $disponibilite = $_POST['disponibilite_filter_value_include']; // tableau de disponibilités
-//     $exclude_disponibilite = $_POST['disponibilite_filter_value_exclude']; // tableau de indisponibilités
-
-//     // Tu peux vérifier ce qui est reçu
-//     foreach ($disponibilite as $val) {
-//         var_dump($val);
-//     }
-//     foreach ($exclude_disponibilite as $val_exclude) {
-//         var_dump($val_exclude);
-//     }
-
-//     // Appel de ta fonction avec le tableau reçu
-//     $result_disponibilite = getCodeCisOfSearch("cisciodispo", "libelle_statut", $disponibilite, $exclude_disponibilite);
-//     var_dump($result_disponibilite);
-// } else {
-//     echo "Aucune valeur de disponibilité reçue.";
-// }
-
-// $resultat_recherche_disponibilite = appelRecherche("disponibilite_filter_value" , ["cisciodispo", "libelle_statut"]);
-
+function genericFormat($typesMedecine) {
+    $result = "";
+    switch($typesMedecine) {
+        case "0" :
+            $result = "princeps";
+            break;
+        case "1" : 
+            $result = "générique";
+            break;
+        case "2":
+            $result = "générique par complémentarité posologique";
+            break;
+        case "4" : 
+            $result = "générique substituable";
+            break;
+    }
+    return $result;
+}
 function getResultOfSearch() {
+    global $pdoTable, $pdoVue;
     $medicaments = [];
     $codeCisList = [];
 
@@ -50,26 +47,33 @@ function getResultOfSearch() {
         $includeKey = $filterKey . '_filter_value_include';
         $excludeKey = $filterKey . '_filter_value_exclude';
 
-        $includeValues = !empty($_POST[$includeKey]) ? $_POST[$includeKey] : [];
-        $excludeValues = !empty($_POST[$excludeKey]) ? $_POST[$excludeKey] : [];
+        $includeValues = isset($_POST[$includeKey]) ? $_POST[$includeKey] : [];
+        $excludeValues = isset($_POST[$excludeKey]) ? $_POST[$excludeKey] : [];
 
-        //var_dump($includeValues);
-        if (!empty($includeValues)) {
+        if (isset($includeValues)) {
             $groupedFilters[$table]['include'][$column] = $includeValues;
         }
 
-        if (!empty($excludeValues)) {
+        if (isset($excludeValues)) {
             $groupedFilters[$table]['exclude'][$column] = $excludeValues;
         }
     }
 
     // Pour chaque table, on applique les filtres groupés
-    foreach ($groupedFilters as $table => $filters) {
-        $include = $filters['include'] ?? [];
-        $exclude = $filters['exclude'] ?? [];
+    foreach ($groupedFilters as $table => $fields) {
+        $include = $fields['include'] ?? [];
+        $exclude = $fields['exclude'] ?? [];
 
-        $cis = getCodeCisOfSearchMulti($table, $include, $exclude);
-        $codeCisList[] = $cis;
+        if(hasNoEmptyFilters($include) || hasNoEmptyFilters($exclude)) {
+            if($table === "liste_substances") {
+                $cis = getCodeCisOfSearchMulti($table, $include, $exclude, $pdoVue);
+            } else {
+                $cis = getCodeCisOfSearchMulti($table, $include, $exclude, $pdoTable);
+            }
+        }
+        if (!empty($cis)) {
+            $codeCisList[] = $cis;
+        }
     }
 
     // Intersection des résultats entre toutes les tables
@@ -77,34 +81,19 @@ function getResultOfSearch() {
 
     // Récupération des données complètes
     $medicaments = getMedecine($codeCisList);
-    var_dump(count($medicaments));
-
-    return $medicaments;
+     return $medicaments;
 }
 
-// var_dump($resultat_recherche_disponibilite);
+function hasNoEmptyFilters(array $filters): bool {
+    foreach ($filters as $values) {
+        if (!empty($values)) {
+            return true;
+        }
+    }
+    return false;
+}
 
-// function appelRecherche($name, array $infosBD) {
-//     var_dump($name.'_include');
-//     if (isset($_POST[$name.'_include']) && isset($_POST[$name.'_exclude'])) {
-//         $disponibilite = $_POST[$name.'_include']; // tableau de disponibilités
-//         $exclude_disponibilite = $_POST[$name.'_exclude']; // tableau de indisponibilités
-
-//         // Tu peux vérifier ce qui est reçu
-//         foreach ($disponibilite as $val) {
-//             var_dump($val);
-//         }
-//         foreach ($exclude_disponibilite as $val_exclude) {
-//             var_dump($val_exclude);
-//         }
-//     }
-//     // Appel de ta fonction avec le tableau reçu
-//     $result_disponibilite = getCodeCisOfSearch($infosBD[0], $infosBD[1], $disponibilite, $exclude_disponibilite);
-//     return $result_disponibilite;    
-// }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -115,9 +104,6 @@ function getResultOfSearch() {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 </head>
 <body>
-<?php 
-include '../../includes/navigation.php';
-?>
 
 <div class="container" id="mainContainer">
     <div id="resultsSection">
@@ -136,43 +122,21 @@ include '../../includes/navigation.php';
             <?php
 
             $medicaments = getResultOfSearch();
+
                 
 
             foreach ($medicaments as $medicament) {
-                if ($medicament['type_generique'] === 0) {
-                    $medicament['type_generique'] = "Médicaments de marques";
-                } elseif ($medicament['type_generique'] === 1 || $medicament['type_generique'] === 2 || $medicament['type_generique'] === 4) {
-                    $medicament['type_generique'] = "Médicaments génériques";
-                } else {
-                    $medicament['type_generique'] = "-";
-                }
+                $medicament['type_generique'] = genericFormat($medicament['type_generique']);
                 echo "<tr data-id='{$medicament['code_cis']}' style='cursor:pointer;'>
-                    <td>" . (!empty($medicament['code_cis']) ? $medicament['code_cis'] : '-') . "</td>
-                    <td>" . (!empty($medicament['denomination']) ? $medicament['denomination'] : '-') . "</td>
-                    <td>" . (!empty($medicament['libelle']) ? $medicament['libelle'] : '-') . "</td>
-                    <td>" . (!empty($medicament['type_generique']) ? $medicament['type_generique'] : '-') . "</td>
-                    <td>" . (!empty($medicament['taux_remboursement']) ? $medicament['taux_remboursement'] : '-') . "</td>
+                    <td>" . (isset($medicament['code_cis']) ? $medicament['code_cis'] : '-') . "</td>
+                    <td>" . (isset($medicament['denomination']) ? $medicament['denomination'] : '-') . "</td>
+                    <td>" . (isset($medicament['libelle']) ? $medicament['libelle'] : '-') . "</td>
+                    <td>" . (isset($medicament['type_generique']) ? $medicament['type_generique'] : '-') . "</td>
+                    <td>" . (isset($medicament['taux_remboursement']) ? $medicament['taux_remboursement'] : '-') . "</td>
                 </tr>";
             }
 
-            function getEqualCodeCis($listResult) {
-            $resultats = [];
-
-            foreach ($listResult as $tableau1) {
-                $intersection = $tableau1;
-
-                // On compare ce tableau avec tous les autres tableaux
-                foreach ($listResult as $tableau2) {
-                    $intersection = array_intersect($intersection, $tableau2);
-                }
-
-                // On stocke l'intersection des éléments pour ce tableau
-                foreach($intersection as $valuesEquals) {
-                    $resultats[] = $valuesEquals;
-                }
-            }
-            return $resultats;
-        }
+            
             ?>
             </tbody>
         </table>
@@ -187,5 +151,24 @@ include '../../includes/navigation.php';
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="result.js"></script>
+<?php
+function getEqualCodeCis($listResult) {
+    $resultats = [];
+
+    foreach ($listResult as $tableau1) {
+        $intersection = $tableau1;
+
+        // On compare ce tableau avec tous les autres tableaux
+        foreach ($listResult as $tableau2) {
+            $intersection = array_intersect($intersection, $tableau2);
+        }
+
+        // On stocke l'intersection des éléments pour ce tableau
+        foreach($intersection as $valuesEquals) {
+            $resultats[] = $valuesEquals;
+        }
+    }
+    return $resultats;
+} ?>
 </body>
 </html>
