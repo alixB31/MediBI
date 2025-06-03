@@ -94,7 +94,11 @@
             echo "<label>Inclure :</label>";
             echo "<select name='{$name}_include[]' class='multi-select' multiple>";
             foreach ($values as $val) {
-                echo "<option value='{$val}'>" . genericFormat($val) . "</option>";
+                if ($label === "Médicaments génériques") {
+                    echo "<option value='{$val}'>" . genericFormat($val) . "</option>";
+                } else {
+                    echo "<option value='{$val}'>" . $val . "</option>";
+                }
             }
 
             echo "</select>";
@@ -105,7 +109,11 @@
             echo "<label>Exclure :</label>";
             echo "<select name='{$name}_exclude[]' class='multi-select' multiple>";
             foreach ($values as $val) {
-                echo "<option value='{$val}'>" . genericFormat($val) . "</option>";
+                if ($label === "Médicaments génériques") {
+                    echo "<option value='{$val}'>" . genericFormat($val) . "</option>";
+                } else {
+                    echo "<option value='{$val}'>" . $val . "</option>";
+                }
             }
             echo "</select>";
             echo "</div>";
