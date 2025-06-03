@@ -77,6 +77,7 @@ function getMedecine($code_cis) {
 
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
+
 function getDetail($code_cis) {
     global $pdoTable;
 
@@ -106,5 +107,6 @@ function getDetail($code_cis) {
     return $query->fetchAll(PDO::FETCH_ASSOC);
 
 }
+
 
 ?>

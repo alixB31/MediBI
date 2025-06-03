@@ -16,7 +16,7 @@
 }
 
 #detailsPanel {
-    margin-top: 9px;
+    margin-top: 113px;
     overflow: hidden;
     padding: 20px;
     border-left: 1px solid #ccc;
@@ -118,4 +118,8 @@
     #resultsTable td:nth-child(6) {
         display: none;
     }
+}
+
+.margin-bottom {
+    margin-bottom: 20px;
 }

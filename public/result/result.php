@@ -141,7 +141,7 @@ function hasNoEmptyFilters(array $filters): bool {
             </tbody>
         </table>
         <form method="post" action="../search/index.php">
-            <button type="submit">Nouvelle recherche</button>
+            <button class="margin-bottom" type="submit">Nouvelle recherche</button>
         </form>
         <form id="modify-search" method="POST" action="../search/index.php">
             <?php
