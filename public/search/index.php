@@ -85,39 +85,40 @@
         }
 
         function renderDualSelect($label, $name, $values) {
+            $includeKey = "{$name}_include";
+            $excludeKey = "{$name}_exclude";
+        
+            $selectedInclude = $_POST[$includeKey] ?? [];
+            $selectedExclude = $_POST[$excludeKey] ?? [];
+        
             echo "<div>";
             echo "<label>{$label} :</label>";
             echo "<div class='filter-row'>";
-            
+        
             // Inclure
             echo "<div class='filter-column'>";
             echo "<label>Inclure :</label>";
-            echo "<select name='{$name}_include[]' class='multi-select' multiple>";
+            echo "<select name='{$includeKey}[]' class='multi-select' multiple>";
             foreach ($values as $val) {
-                if ($label === "Médicaments génériques") {
-                    echo "<option value='{$val}'>" . genericFormat($val) . "</option>";
-                } else {
-                    echo "<option value='{$val}'>" . $val . "</option>";
-                }
+                $selected = in_array($val, $selectedInclude) ? "selected" : "";
+                $labelText = ($label === "Médicaments génériques") ? genericFormat($val) : $val;
+                echo "<option value='{$val}' {$selected}>{$labelText}</option>";
             }
-
             echo "</select>";
             echo "</div>";
-
+        
             // Exclure
             echo "<div class='filter-column'>";
             echo "<label>Exclure :</label>";
-            echo "<select name='{$name}_exclude[]' class='multi-select' multiple>";
+            echo "<select name='{$excludeKey}[]' class='multi-select' multiple>";
             foreach ($values as $val) {
-                if ($label === "Médicaments génériques") {
-                    echo "<option value='{$val}'>" . genericFormat($val) . "</option>";
-                } else {
-                    echo "<option value='{$val}'>" . $val . "</option>";
-                }
+                $selected = in_array($val, $selectedExclude) ? "selected" : "";
+                $labelText = ($label === "Médicaments génériques") ? genericFormat($val) : $val;
+                echo "<option value='{$val}' {$selected}>{$labelText}</option>";
             }
             echo "</select>";
             echo "</div>";
-
+        
             echo "</div></div>";
         }
 
