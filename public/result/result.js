@@ -6,6 +6,7 @@ $(document).ready(function () {
         autoWidth: false,
         pageLength: 10,
         lengthMenu: [[5, 10, 20, 50], [5, 10, 20, 50]],
+        order: [[1, 'asc']], // Tri sur la 2e colonne en ordre croissant
         language: {
             lengthMenu: "Afficher _MENU_ lignes par page",
             info: "Page _PAGE_ sur _PAGES_",
@@ -18,6 +19,7 @@ $(document).ready(function () {
             }
         }
     });
+
 
 
     function isScreenWideEnough() {

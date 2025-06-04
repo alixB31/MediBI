@@ -17,9 +17,13 @@ function getCodeCisOfSearchMulti($table, $pdo, $includeFilters = [], $excludeFil
     foreach ($includeFilters as $column => $values) {
         if (!empty($values)) {
             if ($column === 'substances' || $column === 'voie_administration') {
+                $likeConditions = [];
                 foreach ($values as $value) {
-                    $sql .= " AND (`$column`) LIKE (?)";
+                    $likeConditions[] = "(`$column` LIKE ?)";
                     $params[] = '%' . $value . '%';
+                }
+                if (!empty($likeConditions)) {
+                    $sql .= " AND (" . implode(" OR ", $likeConditions) . ")";
                 }
             } else {
                 $placeholders = implode(',', array_fill(0, count($values), '?'));
@@ -33,9 +37,13 @@ function getCodeCisOfSearchMulti($table, $pdo, $includeFilters = [], $excludeFil
     foreach ($excludeFilters as $column => $values) {
         if (!empty($values)) {
             if ($column === 'substances' || $column === 'voie_administration') {
+                $notLikeConditions = [];
                 foreach ($values as $value) {
-                    $sql .= " AND (`$column`) NOT LIKE (?)";
+                    $notLikeConditions[] = "(`$column` NOT LIKE ?)";
                     $params[] = '%' . $value . '%';
+                }
+                if (!empty($notLikeConditions)) {
+                    $sql .= " AND (" . implode(" AND ", $notLikeConditions) . ")";
                 }
             } else {
                 $placeholders = implode(',', array_fill(0, count($values), '?'));
@@ -45,13 +53,14 @@ function getCodeCisOfSearchMulti($table, $pdo, $includeFilters = [], $excludeFil
         }
     }
 
+
     $query = $pdo->prepare($sql);
 
     foreach ($params as $index => $value) {
         $query->bindValue($index + 1, $value, PDO::PARAM_STR);
     }
 
-    //debugQuery($sql, $params);
+    // debugQuery($sql, $params);
     $query->execute();
 
     return $query->fetchAll(PDO::FETCH_COLUMN);
