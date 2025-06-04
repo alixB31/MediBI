@@ -48,7 +48,7 @@
             renderDualSelect("Disponibilité du médicament", "disponibilite_filter_value", $libelle_statut);
             renderDualSelect("Condition de délivrance", "condition_delivrance_filter_value", $condition_delivrance);
             renderDualSelect("Médicaments génériques", "medicaments_generique_filter_value", $medicament_generique);
-            renderDualSelect("Substances", "substances_filter_value", $substances);
+            renderDualSelect("Substances", "substances_filter_value", recoverDistinct($substances));
             
             ?>
             <button type="submit">Rechercher</button>
