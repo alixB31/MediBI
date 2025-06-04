@@ -76,9 +76,9 @@ function getResultOfSearch() {
         $exclude = $fields['exclude'] ?? [];
         if(hasNoEmptyFilters($include) || hasNoEmptyFilters($exclude)) {
             if($table === "liste_substances") {
-                $cis = getCodeCisOfSearchMulti($table, $include, $exclude, $pdoVue);
+                $cis = getCodeCisOfSearchMulti($table, $pdoVue, $include, $exclude);
             } else {
-                $cis = getCodeCisOfSearchMulti($table, $include, $exclude, $pdoTable);
+                $cis = getCodeCisOfSearchMulti($table, $pdoTable, $include, $exclude);
             }
         }
         if (!empty($cis)) {

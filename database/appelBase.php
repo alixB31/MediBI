@@ -9,7 +9,7 @@ function getDistinctValues($column, $table, $pdo)
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 
-function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters = [], $pdo) {
+function getCodeCisOfSearchMulti($table, $pdo, $includeFilters = [], $excludeFilters = []) {
     $sql = "SELECT code_cis FROM `$table` WHERE 1";
     $params = [];
 
@@ -47,25 +47,23 @@ function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters =
 
     $query = $pdo->prepare($sql);
 
-    // On lie les paramètres par ordre (1, 2, 3, ...)
     foreach ($params as $index => $value) {
         $query->bindValue($index + 1, $value, PDO::PARAM_STR);
     }
 
-    debugQuery($sql, $params); // utile si tu veux afficher la requête et ses valeurs
-
+    //debugQuery($sql, $params);
     $query->execute();
 
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 
-function debugQuery($sql, $params) {
-    foreach ($params as $param) {
-        $escaped = "'" . str_replace("'", "''", $param) . "'"; // doublement d'apostrophes SQL standard
-        $sql = preg_replace('/\?/', $escaped, $sql, 1);
-    }
-    var_dump($sql);
-}
+// function debugQuery($sql, $params) {
+//     foreach ($params as $param) {
+//         $escaped = "'" . str_replace("'", "''", $param) . "'";
+//         $sql = preg_replace('/\?/', $escaped, $sql, 1);
+//     }
+//     var_dump($sql);
+// }
 
 function getMedecine($code_cis) {
     global $pdoVue;
