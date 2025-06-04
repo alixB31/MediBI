@@ -109,7 +109,7 @@ function getDetail($code_cis) {
     global $pdoTable;
 
     $sql = "
-        SELECT cis.code_cis, titulaires, substances, date_amm, cis.denomination, forme_phamaceutique, voie_administration, cis.statut_administratif, nature_composant, valeur_smr, etat_commercialisation, taux_remboursement, prix_medicament_b, reference_dosage, lien_bpdm, cisciodispo.libelle_statut, ciscpd.condition, type_generique, libelle_asmr, texte, lien_page_avis_ct 
+        SELECT cis.code_cis, titulaires, substances, date_amm, cis.denomination, forme_phamaceutique, voie_administration, cis.statut_administratif, nature_composant, valeur_smr, etat_commercialisation, taux_remboursement, prix_medicament_b, reference_dosage, lien_bpdm, cisciodispo.libelle_statut, ciscpd.condition, type_generique, libelle_asmr, texte, lien_page_avis_ct, dosage_substance
         FROM cis
         LEFT JOIN cisciodispo ON cis.code_cis = cisciodispo.code_cis
         LEFT JOIN ciscip ON cis.code_cis = ciscip.code_cis
