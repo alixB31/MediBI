@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recherche Avancée de Médicaments</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    
     <link rel="stylesheet" href="search.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+    
 </head>
 <body>
 <?php
@@ -100,8 +101,8 @@
             $selectedInclude = $_POST[$includeKey] ?? [];
             $selectedExclude = $_POST[$excludeKey] ?? [];
         
-            echo "<div>";
-            echo "<label>{$label} :</label>";
+            echo "<div class='filter-group'>";
+            echo "<h3>{$label} :</h3>";
             echo "<div class='filter-row'>";
         
             // Inclure
