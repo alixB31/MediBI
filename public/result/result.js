@@ -11,6 +11,7 @@ $(document).ready(function () {
             info: "Page _PAGE_ sur _PAGES_",
             infoEmpty: "Aucun résultat disponible",
             infoFiltered: "(filtré depuis _MAX_ lignes)",
+            emptyTable: "Aucune donnée disponible dans le tableau",
             paginate: {
                 previous: "Précédent",
                 next: "Suivant"
@@ -28,6 +29,11 @@ $(document).ready(function () {
         if (!isScreenWideEnough()) return;
 
         const id = $(this).data('id');
+        if (!id) {
+            console.warn('Aucune donnée d\'identifiant trouvée sur la ligne cliquée.');
+            return;
+        }
+
         $.ajax({
             url: '../details/details.php',
             method: 'GET',
