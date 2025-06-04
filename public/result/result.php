@@ -74,7 +74,6 @@ function getResultOfSearch() {
     foreach ($groupedFilters as $table => $fields) {
         $include = $fields['include'] ?? [];
         $exclude = $fields['exclude'] ?? [];
-
         if(hasNoEmptyFilters($include) || hasNoEmptyFilters($exclude)) {
             if($table === "liste_substances") {
                 $cis = getCodeCisOfSearchMulti($table, $include, $exclude, $pdoVue);
@@ -92,7 +91,7 @@ function getResultOfSearch() {
 
     // Récupération des données complètes
     $medicaments = getMedecine($codeCisList);
-     return $medicaments;
+    return $medicaments;
 }
 
 function hasNoEmptyFilters(array $filters): bool {

@@ -18,7 +18,7 @@ function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters =
     foreach ($includeFilters as $column => $values) {
         if (!empty($values)) {
             $placeholders = implode(',', array_fill(0, count($values), '?'));
-            $sql .= " AND $column IN ($placeholders)";
+            $sql .= " AND `$column` IN ($placeholders)";
             $params = array_merge($params, $values);
         }
     }
@@ -27,7 +27,7 @@ function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters =
     foreach ($excludeFilters as $column => $values) {
         if (!empty($values)) {
             $placeholders = implode(',', array_fill(0, count($values), '?'));
-            $sql .= " AND $column NOT IN ($placeholders)";
+            $sql .= " AND `$column` NOT IN ($placeholders)";
             $params = array_merge($params, $values);
         }
     }
@@ -36,18 +36,18 @@ function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters =
     foreach ($params as $index => $value) {
         $query->bindValue($index + 1, $value, PDO::PARAM_STR);
     }
-    debugQuery($sql,$params);
+    //debugQuery($sql,$params);
     $query->execute();
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 
-function debugQuery($sql, $params) {
-    foreach ($params as $param) {
-        $value = is_numeric($param) ? $param : "'" . addslashes($param) . "'";
-        $sql = preg_replace('/\?/', $value, $sql, 1);
-    }
-    // var_dump($sql);
-}
+// function debugQuery($sql, $params) {
+//     foreach ($params as $param) {
+//         $escaped = "'" . str_replace("'", "''", $param) . "'"; // doublement d'apostrophes SQL standard
+//         $sql = preg_replace('/\?/', $escaped, $sql, 1);
+//     }
+//     var_dump($sql);
+// }
 
 function getMedecine($code_cis) {
     global $pdoVue;
