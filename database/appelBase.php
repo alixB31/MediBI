@@ -9,51 +9,67 @@ function getDistinctValues($column, $table, $pdo)
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 
-function getCodeCisOfSearchMulti($table, $includeFilters = [], $excludeFilters = [], $pdo) {
-
-    $sql = "SELECT code_cis FROM $table WHERE 1";
+function getCodeCisOfSearchMulti($table, $pdo, $includeFilters = [], $excludeFilters = []) {
+    $sql = "SELECT code_cis FROM `$table` WHERE 1";
     $params = [];
 
-    // Filtres d'inclusion
+    // Inclusion
     foreach ($includeFilters as $column => $values) {
         if (!empty($values)) {
-            $placeholders = implode(',', array_fill(0, count($values), '?'));
-            $sql .= " AND $column IN ($placeholders)";
-            $params = array_merge($params, $values);
+            if ($column === 'substances' || $column === 'voie_administration') {
+                foreach ($values as $value) {
+                    $sql .= " AND (`$column`) LIKE (?)";
+                    $params[] = '%' . $value . '%';
+                }
+            } else {
+                $placeholders = implode(',', array_fill(0, count($values), '?'));
+                $sql .= " AND `$column` IN ($placeholders)";
+                $params = array_merge($params, $values);
+            }
         }
     }
 
-    // Filtres d'exclusion
+    // Exclusion
     foreach ($excludeFilters as $column => $values) {
         if (!empty($values)) {
-            $placeholders = implode(',', array_fill(0, count($values), '?'));
-            $sql .= " AND $column NOT IN ($placeholders)";
-            $params = array_merge($params, $values);
+            if ($column === 'substances' || $column === 'voie_administration') {
+                foreach ($values as $value) {
+                    $sql .= " AND (`$column`) NOT LIKE (?)";
+                    $params[] = '%' . $value . '%';
+                }
+            } else {
+                $placeholders = implode(',', array_fill(0, count($values), '?'));
+                $sql .= " AND `$column` NOT IN ($placeholders)";
+                $params = array_merge($params, $values);
+            }
         }
     }
 
     $query = $pdo->prepare($sql);
+
     foreach ($params as $index => $value) {
         $query->bindValue($index + 1, $value, PDO::PARAM_STR);
     }
-    debugQuery($sql,$params);
+
+    //debugQuery($sql, $params);
     $query->execute();
+
     return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 
-function debugQuery($sql, $params) {
-    foreach ($params as $param) {
-        $value = is_numeric($param) ? $param : "'" . addslashes($param) . "'";
-        $sql = preg_replace('/\?/', $value, $sql, 1);
-    }
-    var_dump($sql);
-}
+// function debugQuery($sql, $params) {
+//     foreach ($params as $param) {
+//         $escaped = "'" . str_replace("'", "''", $param) . "'";
+//         $sql = preg_replace('/\?/', $escaped, $sql, 1);
+//     }
+//     var_dump($sql);
+// }
 
 function getMedecine($code_cis) {
     global $pdoVue;
-    // if(empty($code_cis)) {
-    //     return [];
-    // }
+    if(empty($code_cis)) {
+        return [];
+    }
     $placeholders = implode(',', array_fill(0, count($code_cis), '?'));
 
     $sql = "

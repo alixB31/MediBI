@@ -17,6 +17,13 @@
 <div class="container">
    <div class="recherche"> 
         <h1>MEDIBI - Recherche Avancée de Médicaments</h1>
+        <?php
+        session_start();
+        if (!empty($_SESSION['error'])) {
+            echo "<p style='color:red; font-weight:bold;'>" . htmlspecialchars($_SESSION['error']) . "</p>";
+            unset($_SESSION['error']);
+        }
+        ?>
         <form method="POST" action="../result/result.php" class="search-form">
             <?php
             global $pdoVue, $pdoTable;
@@ -102,9 +109,10 @@
             echo "<label>Inclure :</label>";
             echo "<select name='{$includeKey}[]' class='multi-select' multiple>";
             foreach ($values as $val) {
+                $escapedVal = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
                 $selected = in_array($val, $selectedInclude) ? "selected" : "";
                 $labelText = ($label === "Médicaments génériques") ? genericFormat($val) : $val;
-                echo "<option value='{$val}' {$selected}>{$labelText}</option>";
+                echo "<option value='{$escapedVal}' {$selected}>{$labelText}</option>";
             }
             echo "</select>";
             echo "</div>";
@@ -114,9 +122,10 @@
             echo "<label>Exclure :</label>";
             echo "<select name='{$excludeKey}[]' class='multi-select' multiple>";
             foreach ($values as $val) {
+                $escapedVal = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
                 $selected = in_array($val, $selectedExclude) ? "selected" : "";
                 $labelText = ($label === "Médicaments génériques") ? genericFormat($val) : $val;
-                echo "<option value='{$val}' {$selected}>{$labelText}</option>";
+                echo "<option value='{$escapedVal}' {$selected}>{$labelText}</option>";
             }
             echo "</select>";
             echo "</div>";

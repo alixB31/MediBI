@@ -1,8 +1,19 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 include '../../database/appelBase.php';
+session_start();
+$hasInput = false;
+foreach ($_POST as $key => $value) {
+    if (is_array($value) && count(array_filter($value)) > 0) {
+        $hasInput = true;
+        break;
+    }
+}
+
+if (!$hasInput) {
+    $_SESSION['error'] = "Veuillez sélectionner au moins un critère de recherche.";
+    header("Location: ../search/index.php");
+    exit;
+}
 function genericFormat($typesMedecine) {
     $result = "";
     switch($typesMedecine) {
@@ -63,12 +74,11 @@ function getResultOfSearch() {
     foreach ($groupedFilters as $table => $fields) {
         $include = $fields['include'] ?? [];
         $exclude = $fields['exclude'] ?? [];
-
         if(hasNoEmptyFilters($include) || hasNoEmptyFilters($exclude)) {
             if($table === "liste_substances") {
-                $cis = getCodeCisOfSearchMulti($table, $include, $exclude, $pdoVue);
+                $cis = getCodeCisOfSearchMulti($table, $pdoVue, $include, $exclude);
             } else {
-                $cis = getCodeCisOfSearchMulti($table, $include, $exclude, $pdoTable);
+                $cis = getCodeCisOfSearchMulti($table, $pdoTable, $include, $exclude);
             }
         }
         if (!empty($cis)) {
@@ -81,7 +91,7 @@ function getResultOfSearch() {
 
     // Récupération des données complètes
     $medicaments = getMedecine($codeCisList);
-     return $medicaments;
+    return $medicaments;
 }
 
 function hasNoEmptyFilters(array $filters): bool {
@@ -104,7 +114,6 @@ function hasNoEmptyFilters(array $filters): bool {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 </head>
 <body>
-
 <div class="container" id="mainContainer">
     <div id="resultsSection">
         <h1>Résultats de la Recherche</h1>
