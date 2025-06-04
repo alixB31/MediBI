@@ -40,7 +40,7 @@
             $medicament_generique = getDistinctValues("type_generique", "cisgener", $pdoTable);
             $substances = getDistinctValues("substances","liste_substances", $pdoVue);
 
-            renderDualSelect("Dénomination", "denomination_filter_value", $denomination);
+            renderDualInput("Dénomination", "denomination_filter_value", $denomination);
             renderDualSelect("Forme pharmaceutique", "forme_pharmaceutique_filter_value", $formes);
             renderDualSelect("Voie d'administration", "voie_administration_filter_value", recoverDistinct($voies));
             renderDualSelect("Titulaire", "titulaires_filter_value", $titulaires);
@@ -129,6 +129,40 @@
                 echo "<option value='{$escapedVal}' {$selected}>{$labelText}</option>";
             }
             echo "</select>";
+            echo "</div>";
+        
+            echo "</div></div>";
+        }
+
+        function renderDualInput($label, $name) {
+            $includeKey = "{$name}_include";
+            $excludeKey = "{$name}_exclude";
+        
+            // Si tableau → on fait implode
+            if (isset($_POST[$includeKey]) && is_array($_POST[$includeKey])) {
+                $included = htmlspecialchars(implode('; ', $_POST[$includeKey]));
+            } else {
+                $included = isset($_POST[$includeKey]) ? htmlspecialchars($_POST[$includeKey]) : '';
+            }
+        
+            if (isset($_POST[$excludeKey]) && is_array($_POST[$excludeKey])) {
+                $excluded = htmlspecialchars(implode('; ', $_POST[$excludeKey]));
+            } else {
+                $excluded = isset($_POST[$excludeKey]) ? htmlspecialchars($_POST[$excludeKey]) : '';
+            }
+        
+            echo "<div class='filter-group'>";
+            echo "<h3>{$label} :</h3>";
+            echo "<div class='filter-row'>";
+        
+            echo "<div class='filter-column'>";
+            echo "<label>Inclure :</label>";
+            echo "<input type='text' name='{$includeKey}[]' value='{$included}' placeholder='Ex : doliprane; ibuprofène'>";
+            echo "</div>";
+        
+            echo "<div class='filter-column'>";
+            echo "<label>Exclure :</label>";
+            echo "<input type='text' name='{$excludeKey}[]' value='{$excluded}' placeholder='Ex : aspirine'>";
             echo "</div>";
         
             echo "</div></div>";

@@ -15,8 +15,9 @@ function getCodeCisOfSearchMulti($table, $pdo, $includeFilters = [], $excludeFil
 
     // Inclusion
     foreach ($includeFilters as $column => $values) {
+        $values = array_filter($values, fn($v) => trim($v) !== '');
         if (!empty($values)) {
-            if ($column === 'substances' || $column === 'voie_administration') {
+            if ($column === 'substances' || $column === 'voie_administration' || $column === 'denomination') {
                 $likeConditions = [];
                 foreach ($values as $value) {
                     $likeConditions[] = "(`$column` LIKE ?)";
@@ -35,8 +36,9 @@ function getCodeCisOfSearchMulti($table, $pdo, $includeFilters = [], $excludeFil
 
     // Exclusion
     foreach ($excludeFilters as $column => $values) {
+        $values = array_filter($values, fn($v) => trim($v) !== '');
         if (!empty($values)) {
-            if ($column === 'substances' || $column === 'voie_administration') {
+            if ($column === 'substances' || $column === 'voie_administration' || $column === 'denomination') {
                 $notLikeConditions = [];
                 foreach ($values as $value) {
                     $notLikeConditions[] = "(`$column` NOT LIKE ?)";
@@ -60,7 +62,7 @@ function getCodeCisOfSearchMulti($table, $pdo, $includeFilters = [], $excludeFil
         $query->bindValue($index + 1, $value, PDO::PARAM_STR);
     }
 
-    // debugQuery($sql, $params);
+    //debugQuery($sql, $params);
     $query->execute();
 
     return $query->fetchAll(PDO::FETCH_COLUMN);

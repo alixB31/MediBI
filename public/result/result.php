@@ -1,9 +1,16 @@
 <?php
 include '../../database/appelBase.php';
 session_start();
+
 $hasInput = false;
+
 foreach ($_POST as $key => $value) {
-    if (is_array($value) && count(array_filter($value)) > 0) {
+    if (is_array($value)) {
+        if (count(array_filter($value)) > 0) {
+            $hasInput = true;
+            break;
+        }
+    } elseif (is_string($value) && trim($value) !== '') {
         $hasInput = true;
         break;
     }
@@ -14,6 +21,11 @@ if (!$hasInput) {
     header("Location: ../search/index.php");
     exit;
 }
+function parseTextField($key) {
+    $raw = $_POST[$key][0] ?? '';  // Les inputs arrivent comme un tableau (même si un seul champ)
+    return array_filter(array_map('trim', explode(';', $raw)));
+}
+
 function genericFormat($typesMedecine) {
     $result = "";
     switch($typesMedecine) {
@@ -150,22 +162,35 @@ function hasNoEmptyFilters(array $filters): bool {
             </tbody>
         </table>
         <form method="post" action="../search/index.php">
-            <button class="margin-bottom" type="submit">Nouvelle recherche</button>
-        </form>
-        <form id="modify-search" method="POST" action="../search/index.php">
-            <?php
-            foreach ($_POST as $key => $value) {
-                if (is_array($value)) {
-                    foreach ($value as $v) {
-                        echo "<input type='hidden' name='{$key}[]' value=\"" . htmlspecialchars($v) . "\">";
+    <button class="margin-bottom" type="submit">Nouvelle recherche</button>
+</form>
+
+<form id="modify-search" method="POST" action="../search/index.php">
+    <?php
+    foreach ($_POST as $key => $value) {
+        if (is_array($value)) {
+            // Si le tableau contient lui-même un tableau (cas des inputs multiples dans des [][])
+            if (isset($value[0]) && is_array($value[0])) {
+                // On le convertit en chaîne de caractères séparés par des ;
+                $flattened = [];
+                foreach ($value as $innerArray) {
+                    foreach ($innerArray as $subValue) {
+                        $flattened[] = $subValue;
                     }
-                } else {
-                    echo "<input type='hidden' name='{$key}' value=\"" . htmlspecialchars($value) . "\">";
                 }
+                echo "<input type='hidden' name=\"" . htmlspecialchars($key) . "[0]\" value=\"" . htmlspecialchars(implode('; ', $flattened)) . "\">";
+            } else {
+                // Sinon on a un tableau simple
+                echo "<input type='hidden' name=\"" . htmlspecialchars($key) . "[0]\" value=\"" . htmlspecialchars(implode('; ', $value)) . "\">";
             }
-            ?>
-            <button type="submit">Modifier la recherche</button>
-        </form>
+        } else {
+            // Pas un tableau, on laisse tel quel
+            echo "<input type='hidden' name=\"" . htmlspecialchars($key) . "\" value=\"" . htmlspecialchars($value) . "\">";
+        }
+    }
+    ?>
+    <button type="submit">Modifier la recherche</button>
+</form>
     </div>
 
     <div id="detailsPanel">
